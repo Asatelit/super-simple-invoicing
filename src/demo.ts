@@ -1,4 +1,3 @@
-import { subDays, eachDayOfInterval, addHours } from 'date-fns';
 import { INIT_STATE } from './assets';
 import { getRandomInt, getTimestamp } from './utils';
 import { AppState } from './types';
