@@ -1,0 +1,16 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 42px 0;
+}
+
+.title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.breadcrumbs {
+  margin: 4px 0 0;
+}
