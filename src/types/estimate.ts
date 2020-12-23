@@ -3,16 +3,16 @@ import { Item } from './item';
 import { EstimateStatus } from '../enums';
 
 export type Estimate = {
-  createdAt: string;
+  createdAt: Date;
   customerId: string;
   discount: number;
   discountPerItem: 'no' | 'yes';
   discountType: 'fixed' | 'percentage';
   discountVal: number;
-  estimateDate: string;
+  estimateDate: Date;
   estimateNumber: string;
   estimateTemplateId: string | null;
-  expiryDate: string;
+  expiryDate: Date;
   id: string;
   isDeleted: boolean;
   items: Item[];
@@ -23,14 +23,14 @@ export type Estimate = {
   tax: number;
   taxes: Tax[];
   total: number;
-  updatedAt: string;
+  updatedAt: Date;
 };
 
 export type EstimateTemplate = {
-  createdAt: string;
+  createdAt: Date;
   id: number;
   name: string;
   path: string;
-  updatedAt: string;
+  updatedAt: Date;
   view: string;
 };

@@ -49,10 +49,10 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
               primary={invoice.customer?.name || 'Unknown'}
               secondary={
                 <>
-                  <div>{invoice.invoiceNumber}</div>
-                  <div className={styles.chip} style={{ background: getColor(invoice.status) }}>
+                  <span className={styles.number}>{invoice.invoiceNumber}</span>
+                  <span className={styles.chip} style={{ background: getColor(invoice.status) }}>
                     {invoice.status}
-                  </div>
+                  </span>
                 </>
               }
             />

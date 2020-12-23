@@ -1,25 +1,26 @@
 import { Action, Item, Optional } from '../types';
 import { getTimestamp, generateId } from '../utils';
 
-type CommonItemProps = 'description' | 'taxesIds' | 'unitId';
+type CommonRequiredItemProps = 'name' | 'price';
+type CommonOptionalItemProps = 'description' | 'taxesIds' | 'unit';
 
 // prettier-ignore
-type AddItemData = Pick<
-  Optional<Item, CommonItemProps>,
-  'name' | 'price' | CommonItemProps
+export type ItemsActionsAdd = Pick<
+  Optional<Item, CommonOptionalItemProps>,
+  CommonRequiredItemProps | CommonOptionalItemProps
 >;
 
 // prettier-ignore
-type UpdateItemData = Pick<
-  Optional<Item, 'name' | CommonItemProps>,
-  'id' | 'name' | 'price' | CommonItemProps
+export type ItemsActionsUpdate = Pick<
+  Optional<Item, 'name' | CommonOptionalItemProps>,
+  'id' | CommonRequiredItemProps | CommonOptionalItemProps
 >;
 
 export type ItemsActions = {
-  add: (data: AddItemData) => Item;
-  update: (data: UpdateItemData) => Item | null;
-  remove: (ids: string[]) => void;
-  undoRemove: (ids: string[]) => void;
+  add: (data: ItemsActionsAdd) => Item;
+  update: (data: ItemsActionsUpdate) => Item | null;
+  remove: (ids: string[]) => Item[] | null;
+  undoRemove: (ids: string[]) => Item[] | null;
 };
 
 export const createItemsActions: Action<ItemsActions> = (state, updateState) => ({
@@ -29,13 +30,13 @@ export const createItemsActions: Action<ItemsActions> = (state, updateState) => 
   add: (data) => {
     const newItem: Item = {
       createdAt: getTimestamp(),
-      description: data.description || '',
+      description: data.description ?? '',
       id: generateId(),
       isDeleted: false,
       name: data.name,
       price: data.price,
       taxesIds: data.taxesIds ?? [],
-      unitId: data.unitId || null,
+      unit: data.unit ?? '',
       updatedAt: getTimestamp(),
     };
 
@@ -55,11 +56,11 @@ export const createItemsActions: Action<ItemsActions> = (state, updateState) => 
 
     const updItem: Item = {
       ...item,
-      description: data.description ?? '',
+      description: data.description ?? item.description,
       name: data.name ?? item.name,
       price: data.price ?? item.price,
-      taxesIds: data.taxesIds ?? [],
-      unitId: data.unitId ?? item.unitId,
+      taxesIds: data.taxesIds ?? item.taxesIds,
+      unit: data.unit ?? item.unit,
       updatedAt: getTimestamp(),
     };
 
@@ -73,19 +74,21 @@ export const createItemsActions: Action<ItemsActions> = (state, updateState) => 
    * Deletes an item.
    */
   remove: (ids) => {
-    const items = state.items.map((item) =>
-      ids.includes(item.id) ? { ...item, isDeleted: true } : item,
-    );
+    const removedData = state.items.filter((item) => ids.includes(item.id));
+    if (!removedData.length) return null;
+    const items = state.items.map((item) => (ids.includes(item.id) ? { ...item, isDeleted: true } : item));
     updateState({ items });
+    return removedData;
   },
 
   /**
    * Undo delete.
    */
   undoRemove: (ids) => {
-    const items = state.items.map((item) =>
-      ids.includes(item.id) ? { ...item, isDeleted: false } : item,
-    );
+    const recoveredData = state.items.filter((item) => ids.includes(item.id));
+    if (!recoveredData.length) return null;
+    const items = state.items.map((item) => (ids.includes(item.id) ? { ...item, isDeleted: false } : item));
     updateState({ items });
+    return recoveredData;
   },
 });

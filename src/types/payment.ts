@@ -1,12 +1,12 @@
 export type Payment = {
   amount: number;
-  createdAt: string;
+  createdAt: Date;
   customerId: string;
   id: string;
   invoiceId: string | null;
   notes: string | null;
-  paymentDate: string;
+  paymentDate: Date;
   paymentMode: string | null;
   paymentNumber: string;
-  updatedAt: string;
+  updatedAt: Date;
 };

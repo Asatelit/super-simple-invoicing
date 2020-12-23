@@ -24,7 +24,7 @@ export const INIT_SETTINGS: Settings = {
   phone: null,
   website: null,
   currency: {
-    createdAt: '',
+    createdAt: new Date(),
     code: 'USD',
     decimalSeparator: '.',
     id: 1,
@@ -33,7 +33,7 @@ export const INIT_SETTINGS: Settings = {
     swapCurrencySymbol: 0,
     symbol: '$',
     thousandSeparator: ',',
-    updatedAt: '2020-11-11 00:00:04',
+    updatedAt: new Date(),
   },
 
   estimateAutoGenerate: true,
@@ -47,7 +47,7 @@ export const INIT_SETTINGS: Settings = {
   currencies: [
     {
       code: 'USD',
-      createdAt: '2020-11-11 00:00:04',
+      createdAt: new Date(),
       decimalSeparator: '.',
       id: 1,
       name: 'US Dollar',
@@ -55,7 +55,7 @@ export const INIT_SETTINGS: Settings = {
       swapCurrencySymbol: 0,
       symbol: '$',
       thousandSeparator: ',',
-      updatedAt: '2020-11-11 00:00:04',
+      updatedAt: new Date(),
     },
   ],
   dateFormats: [

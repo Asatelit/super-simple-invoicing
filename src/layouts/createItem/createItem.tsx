@@ -10,6 +10,7 @@ import styles from './createItem.module.css';
 export type CreateItemProps = {
   actions: AppActions;
   breadcrumbs?: BreadcrumbsCrumbProp[];
+  edit?: boolean;
 };
 
 export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) => {
@@ -27,7 +28,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
     actions.customers.add({ name: '', ...data });
-    replace(Routes.Customers);
+    replace(Routes.CustomersList);
   };
 
   const formData: FormDataProp[] = [

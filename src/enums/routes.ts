@@ -3,24 +3,33 @@ export enum Routes {
   SignUp = '/create-account',
   Admin = '/admin',
   Dashboard = '/admin/dashboard',
-  Customers = '/admin/customers',
+  // Customer
+  CustomersList = '/admin/customers',
   CustomersCreate = '/admin/customers/create',
   CustomersEdit = '/admin/customers/:id/edit',
   CustomersView = '/admin/customers/:id/view',
-  Items = '/admin/items',
+  // Items
+  ItemsList = '/admin/items',
   ItemsCreate = '/admin/items/create',
-  Estimates = '/admin/estimates',
+  ItemsEdit = '/admin/items/:id/edit',
+  ItemsView = '/admin/items/:id/view',
+  // Estimates
+  EstimatesList = '/admin/estimates',
   EstimatesCreate = '/admin/estimates/create',
   EstimatesEdit = '/admin/estimates/:id/edit',
   EstimatesView = '/admin/estimates/:id/view',
+  // Invoices
   InvoicesList = '/admin/invoices',
   InvoicesCreate = '/admin/invoices/create',
   InvoicesEdit = '/admin/invoices/:id/edit',
   InvoicesView = '/admin/invoices/:id/view',
-  Payments = '/admin/payments',
+  // Payments
+  PaymentsList = '/admin/payments',
   PaymentsCreate = '/admin/payments/create',
-  Expenses = '/admin/expenses',
+  // Expenses
+  ExpensesList = '/admin/expenses',
   ExpensesCreate = '/admin/expenses/create',
+  // Other
   Reports = '/admin/reports',
   Settings = '/admin/settings',
 }

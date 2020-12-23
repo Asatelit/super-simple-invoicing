@@ -4,8 +4,8 @@ export function generateId(): string {
   return cryptoObj.getRandomValues(seed).join('-');
 }
 
-export function getTimestamp(): string {
-  return new Date().toISOString();
+export function getTimestamp(): Date {
+  return new Date();
 }
 
 /**

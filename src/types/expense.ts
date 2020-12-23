@@ -1,12 +1,12 @@
 export type Expense = {
   amount: number;
   attachmentReceipt: string;
-  createdAt: string;
+  createdAt: Date;
   expenseCategoryId: string;
-  expenseDate: string;
+  expenseDate: Date;
   id: string;
   notes: string;
-  updatedAt: string;
+  updatedAt: Date;
   customerId: string;
 };
 
@@ -16,9 +16,9 @@ export type Expense = {
  */
 export type ExpenseCategory = {
   amount: number | string;
-  createdAt: string;
+  createdAt: Date;
   description: string;
   id: string;
   name: string;
-  updatedAt: string;
+  updatedAt: Date;
 };

@@ -1,23 +1,21 @@
 import React, { useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, generatePath } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DataMap } from '@grapecity/wijmo.grid';
 import { CellMaker } from '@grapecity/wijmo.grid.cellmaker';
 import { FlexGrid, FlexGridColumn, FlexGridCellTemplate } from '@grapecity/wijmo.react.grid';
 import {
-  Box,
-  Button,
   Card,
   CardContent,
   Container,
   Grid,
-  IconButton,
   Typography,
   ListItemIcon,
   Menu,
   MenuItem,
 } from '@material-ui/core';
-import { MoreVert, Edit, Visibility, Delete, CheckCircle, Description } from '@material-ui/icons';
+import { Edit, Visibility, Delete, CheckCircle, Description } from '@material-ui/icons';
+import { MenuButton, UndoButton } from 'components';
 import { AppActions, Customer, Estimate, Invoice } from 'types';
 import { Routes } from 'enums';
 import { formatItem } from 'utils';
@@ -29,20 +27,6 @@ export type DashboardProps = {
   invoices: Invoice[];
   estimates: Estimate[];
 };
-
-const MenuButton = ({ onClick }: { onClick: (event: React.MouseEvent<HTMLElement>) => void }) => (
-  <div>
-    <IconButton
-      size="small"
-      aria-label="more"
-      aria-controls="long-menu"
-      aria-haspopup="true"
-      onClick={(e) => onClick(e)}
-    >
-      <MoreVert />
-    </IconButton>
-  </div>
-);
 
 export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoices, estimates }) => {
   const [invoiceMenuAnchorElement, setInvoiceMenuAnchorElement] = useState<null | HTMLElement>(null);
@@ -82,18 +66,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
         if (!currentInvoice) return;
         const removedData = actions.invoices.remove([currentInvoice.id]);
         if (removedData) {
-          toast(
-            <Box display="flex" alignItems="center" justifyContent="space-between" mx={2}>
-              <Typography variant="body1" component="span">
-                Invoice deleted.
-              </Typography>
-              <Button size="small" variant="outlined" onClick={() => handlers.invoice.undo(removedData)}>
-                UNDO
-              </Button>
-            </Box>,
-          );
+          toast(<UndoButton message="Invoice deleted." onClick={() => handlers.invoice.undo(removedData)} />);
         }
-
         handleCloseMenu();
       },
 
@@ -143,17 +117,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
         const removedData = actions.estimates.remove([currentEstimate.id]);
         if (removedData) {
           toast(
-            <Box display="flex" alignItems="center" justifyContent="space-between" mx={2}>
-              <Typography variant="body1" component="span">
-                Estimate deleted.
-              </Typography>
-              <Button size="small" variant="outlined" onClick={() => handlers.estimate.undo(removedData)}>
-                UNDO
-              </Button>
-            </Box>,
+            <UndoButton message="Estimate deleted." onClick={() => handlers.estimate.undo(removedData)} />,
           );
         }
-
         handleCloseMenu();
       },
 
@@ -212,11 +178,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
   ];
 
   const renderInvoiceCustomerLink = CellMaker.makeLink({
-    click: (_, ctx) => history.push(Routes.InvoicesView.replace(':id', ctx.item.id)),
+    href: Routes.InvoicesView.replace(':id', '${item.id}'), // eslint-disable-line
+    click: (_, ctx) => history.push(generatePath(Routes.InvoicesView, { id: ctx.item.id })),
   });
 
   const renderEstimateCustomerLink = CellMaker.makeLink({
-    click: (_, ctx) => history.push(Routes.EstimatesView.replace(':id', ctx.item.id)),
+    href: Routes.EstimatesView.replace(':id', '${item.id}'), // eslint-disable-line
+    click: (_, ctx) => history.push(generatePath(Routes.EstimatesView, { id: ctx.item.id })),
   });
 
   const renderInvoiceActionsCell = (cell: { item: Invoice }) => (
@@ -233,7 +201,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
         Due Invoices
       </Typography>
       <FlexGrid {...gridCommonProps} itemsSource={availableInvoices}>
-        <FlexGridColumn header="Due On" binding="dueDate" format="MMM d yyyy" />
+        <FlexGridColumn header="Due On" binding="dueDate" format="dd MMM yyyy" />
         <FlexGridColumn
           header="Customer"
           binding="customerId"
@@ -256,7 +224,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
         Recent Estimates
       </Typography>
       <FlexGrid {...gridCommonProps} itemsSource={availableEstimates}>
-        <FlexGridColumn header="Date" binding="expiryDate" format="MMM d yyyy" />
+        <FlexGridColumn header="Date" binding="expiryDate" format="dd MMM yyyy" />
         <FlexGridColumn
           header="Customer"
           binding="customerId"

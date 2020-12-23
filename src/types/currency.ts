@@ -1,6 +1,6 @@
 export type Currency = {
   code: string;
-  createdAt: string;
+  createdAt: Date;
   decimalSeparator: string;
   id: number;
   name: string;
@@ -8,5 +8,5 @@ export type Currency = {
   swapCurrencySymbol: number;
   symbol: string;
   thousandSeparator: string;
-  updatedAt: string;
+  updatedAt: Date;
 };

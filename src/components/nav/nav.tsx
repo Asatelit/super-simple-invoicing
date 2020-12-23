@@ -22,14 +22,14 @@ export type NavGroup = NavItem[];
 const navGroups: NavGroup[] = [
   [
     { icon: <DashboardIcon />, label: 'Dashboard', route: Routes.Dashboard },
-    { icon: <PeopleIcon />, label: 'Customers', route: Routes.Customers },
-    { icon: <StarIcon />, label: 'Items', route: Routes.Items },
+    { icon: <PeopleIcon />, label: 'Customers', route: Routes.CustomersList },
+    { icon: <StarIcon />, label: 'Items', route: Routes.ItemsList },
   ],
   [
-    { icon: <AssignmentIcon />, label: 'Estimates', route: Routes.Estimates },
+    { icon: <AssignmentIcon />, label: 'Estimates', route: Routes.EstimatesList },
     { icon: <InvoicesIcon />, label: 'Invoices', route: Routes.InvoicesList },
-    { icon: <PaymentsIcon />, label: 'Payments', route: Routes.Payments },
-    { icon: <ExpensesIcon />, label: 'Expenses', route: Routes.Expenses },
+    { icon: <PaymentsIcon />, label: 'Payments', route: Routes.PaymentsList },
+    { icon: <ExpensesIcon />, label: 'Expenses', route: Routes.ExpensesList },
   ],
   [
     { icon: <ReportsIcon />, label: 'Reports', route: Routes.Reports },
