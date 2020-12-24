@@ -48,7 +48,16 @@ export function generateDemoData(): AppState {
     ...INIT_STATE,
     settings: {
       ...INIT_STATE.settings,
-      name: 'My Company',
+      accountEmail: 'admin@treadstone.co',
+      accountName: 'Treadstone',
+      addressCity: 'Louisville',
+      addressCountry: 'United States',
+      addressLine1: '407 Cerullo Road',
+      addressState: 'Kentucky',
+      addressZip: '40244',
+      companyName: 'Treadstone LTD',
+      email: 'mailbox@treadstone.co',
+      phone: '502-380-2582',
     },
   };
 
@@ -132,6 +141,14 @@ export function generateDemoData(): AppState {
       expenseDate: getTimestamp(),
     }),
   );
+
+  // Generate Taxes
+  const taxes = () => A.createTaxesActions(state(), updateState);
+  taxes().add({
+    name: 'State income tax',
+    collectiveTax: true,
+    percent: 2,
+  });
 
   return state();
 }

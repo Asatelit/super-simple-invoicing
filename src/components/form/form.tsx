@@ -2,21 +2,23 @@ import React, { Fragment, ReactElement, ReactNode } from 'react';
 import { Box, Divider, Grid, GridProps, Paper, Typography } from '@material-ui/core';
 
 export type FormDataProp = {
-  label: string;
   action?: ReactNode;
   elements: { gridProps: GridProps; children: ReactElement }[];
+  label: string;
+  subtitle?: string;
 };
 
 export type FormProps = {
   id?: string;
   data: FormDataProp[];
+  subtitle?: string;
   onSubmit?: (event: React.FormEvent) => void;
 };
 
 export const Form = ({ data, id = 'Form', onSubmit = () => null }: FormProps) => (
   <Paper style={{ padding: '48px', marginBottom: '48px' }}>
     <form id={id} onSubmit={onSubmit}>
-      {data.map(({ action, label, elements }, groupKey) => (
+      {data.map(({ action, label, elements, subtitle }, groupKey) => (
         <React.Fragment key={`FormGroup${groupKey}`}>
           <Box
             display="flex"
@@ -24,7 +26,21 @@ export const Form = ({ data, id = 'Form', onSubmit = () => null }: FormProps) =>
             justifyContent="space-between"
             style={{ marginBottom: '24px' }}
           >
-            <Typography variant="h6">{label}</Typography>
+            <div>
+              <Typography display="block" variant="h6">
+                {label}
+              </Typography>
+              {subtitle && (
+                <Typography
+                  display="block"
+                  variant="body1"
+                  color="textSecondary"
+                  style={{ margin: '12px 0 24px' }}
+                >
+                  {subtitle}
+                </Typography>
+              )}
+            </div>
             {action}
           </Box>
           <Grid container spacing={3}>

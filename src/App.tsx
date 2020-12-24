@@ -38,7 +38,7 @@ function App() {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
   const [context, actions] = useContext(appContext);
 
-  const { customers, estimates, items, invoices, settings, payments, expenses } = context;
+  const { customers, estimates, items, invoices, settings, payments, expenses, taxes } = context;
 
   // Users might have specified a preference for a light or dark theme.
   const theme = React.useMemo(() => createMuiTheme({ palette: { type: isDarkMode ? 'dark' : 'light' } }), [
@@ -82,7 +82,7 @@ function App() {
     { path: Routes.PaymentsList, name: 'Payments', component: <L.Payments payments={payments} /> },
     { path: Routes.ExpensesList, name: 'Expenses', component: <L.Expenses expenses={expenses} /> },
     { path: Routes.Reports, name: 'Reports', component: <></> },
-    { path: Routes.Settings, name: 'Settings', component: <L.Settings actions={actions} settings={settings} /> },
+    { path: Routes.Settings, name: 'Settings', component: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];
 
   const renderRoute = (key: number, path: string, children: ReactElement) => (

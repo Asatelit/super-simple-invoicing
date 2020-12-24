@@ -61,6 +61,8 @@ export const AppContextProvider: React.FC = ({ children }) => {
     invoices: A.createInvoicesActions(state, updateContext),
     items: A.createItemsActions(state, updateContext),
     payments: A.createPaymentsActions(state, updateContext),
+    settings: A.createSettingsActions(state, updateContext),
+    taxes: A.createTaxesActions(state, updateContext),
   };
 
   const views: AppViews = {

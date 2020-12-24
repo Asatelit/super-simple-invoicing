@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Container, Button, TextField } from '@material-ui/core';
+import { Container, Button, TextField, GridProps } from '@material-ui/core';
 import { Common } from 'layouts';
 import { Form, FormDataProp, BreadcrumbsCrumbProp } from 'components';
 import { AppActions, Customer } from 'types';
@@ -31,12 +31,14 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
     replace(Routes.CustomersList);
   };
 
+  const gridProps: GridProps = { item: true, sm: 12, lg: 6 };
+
   const formData: FormDataProp[] = [
     {
       label: 'Basic Info',
       elements: [
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               required
@@ -50,7 +52,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -63,7 +65,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -78,7 +80,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -92,7 +94,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -105,7 +107,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -124,7 +126,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
       label: 'Billing Address',
       elements: [
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -137,21 +139,21 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="BillingAddressCountry" name="BillingAddressCountry" label="Country" />
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: <TextField fullWidth id="BillingAddressState" name="BillingAddressState" label="State" />,
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: <TextField fullWidth id="BillingAddressCity" name="BillingAddressCity" label="City" />,
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -162,11 +164,11 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: <TextField fullWidth id="BillingAddressPhone" name="BillingAddressPhone" label="Phone" />,
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -177,7 +179,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="BillingAddressZipCode" name="BillingAddressZipCode" label="Zip Code" />
           ),
@@ -188,27 +190,27 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
       label: 'Shipping Address',
       elements: [
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: <TextField fullWidth id="ShippingAddressName" name="ShippingAddressName" label="Name" />,
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="ShippingAddressCountry" name="ShippingAddressCountry" label="Country" />
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="ShippingAddressState" name="ShippingAddressState" label="State" />
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: <TextField fullWidth id="ShippingAddressCity" name="ShippingAddressCity" label="City" />,
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -219,13 +221,13 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="ShippingAddressPhone" name="ShippingAddressPhone" label="Phone" />
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField
               fullWidth
@@ -236,7 +238,7 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
           ),
         },
         {
-          gridProps: { item: true, xs: 12, sm: 6 },
+          gridProps,
           children: (
             <TextField fullWidth id="ShippingAddressZipCode" name="ShippingAddressZipCode" label="Zip Code" />
           ),

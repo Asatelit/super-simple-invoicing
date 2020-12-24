@@ -76,14 +76,14 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
     variant: 'outlined',
   });
 
-  const commonGridProps: GridProps = { item: true, xs: 12, sm: 6 };
+  const gridProps: GridProps = { item: true, sm: 12, lg: 6 };
 
   const formData: FormDataProp[] = [
     {
       label: 'Basic Info',
       elements: [
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('DisplayName')}
@@ -95,7 +95,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('PrimaryContactName')}
@@ -106,7 +106,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('Email')}
@@ -118,7 +118,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('Phone')}
@@ -130,7 +130,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('PrimaryCurrency')}
@@ -141,7 +141,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('Website')}
@@ -158,7 +158,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
       label: 'Billing Address',
       elements: [
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressStreet1')}
@@ -169,7 +169,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressCountry')}
@@ -180,7 +180,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressStreet2')}
@@ -191,7 +191,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressState')}
@@ -202,7 +202,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressCity')}
@@ -213,7 +213,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressPhone')}
@@ -224,7 +224,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('BillingAddressZipCode')}
@@ -245,7 +245,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
       ),
       elements: [
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressStreet1')}
@@ -256,7 +256,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressCountry')}
@@ -267,7 +267,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressStreet2')}
@@ -278,7 +278,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressState')}
@@ -289,7 +289,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressCity')}
@@ -300,7 +300,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressPhone')}
@@ -311,7 +311,7 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
           ),
         },
         {
-          gridProps: { ...commonGridProps },
+          gridProps,
           children: (
             <TextField
               {...getCommonTextFieldProps('ShippingAddressZipCode')}

@@ -1,25 +1,26 @@
 import { Action, Tax, Optional } from '../types';
 import { getTimestamp, generateId } from '../utils';
 
-type CommonTaxProps = 'collectiveTax' | 'compoundTax' | 'description' | 'percent';
+type CommonOptionalTaxProps = 'collectiveTax' | 'compoundTax' | 'description' | 'percent';
+type CommonReqiredTaxProps = 'name';
 
 // prettier-ignore
-type AddTaxData = Pick<
-  Optional<Tax, CommonTaxProps>,
-  'name' | CommonTaxProps
+export type TaxActionsAddProps = Pick<
+  Optional<Tax, CommonOptionalTaxProps>,
+  CommonReqiredTaxProps | CommonOptionalTaxProps
 >;
 
 // prettier-ignore
-type UpdateTaxData = Pick<
-  Optional<Tax, 'name' | CommonTaxProps>,
-  'id' | 'name' | CommonTaxProps
+export type TaxActionsUpdateProps = Pick<
+  Optional<Tax, CommonReqiredTaxProps | CommonOptionalTaxProps>,
+  'id' | CommonReqiredTaxProps | CommonOptionalTaxProps
 >;
 
 export type TaxActions = {
-  add: (data: AddTaxData) => Tax;
-  update: (data: UpdateTaxData) => Tax | null;
-  remove: (ids: string[]) => void;
-  undoRemove: (ids: string[]) => void;
+  add: (data: TaxActionsAddProps) => Tax;
+  update: (data: TaxActionsUpdateProps) => Tax | null;
+  remove: (ids: string[]) => Tax[] | null;
+  undoRemove: (ids: string[]) => Tax[] | null;
 };
 
 export const createTaxesActions: Action<TaxActions> = (state, updateState) => ({
@@ -73,19 +74,21 @@ export const createTaxesActions: Action<TaxActions> = (state, updateState) => ({
    * Deletes a tax.
    */
   remove: (ids) => {
-    const taxes = state.taxes.map((tax) =>
-      ids.includes(tax.id) ? { ...tax, isDeleted: true } : tax,
-    );
+    const removedData = state.taxes.filter((invoice) => ids.includes(invoice.id));
+    if (!removedData.length) return null;
+    const taxes = state.taxes.map((tax) => (ids.includes(tax.id) ? { ...tax, isDeleted: true } : tax));
     updateState({ taxes });
+    return removedData;
   },
 
   /**
    * Undo delete.
    */
   undoRemove: (ids) => {
-    const taxes = state.taxes.map((tax) =>
-      ids.includes(tax.id) ? { ...tax, isDeleted: false } : tax,
-    );
+    const recoveredData = state.taxes.filter((invoice) => ids.includes(invoice.id));
+    if (!recoveredData.length) return null;
+    const taxes = state.taxes.map((tax) => (ids.includes(tax.id) ? { ...tax, isDeleted: false } : tax));
     updateState({ taxes });
+    return recoveredData;
   },
 });

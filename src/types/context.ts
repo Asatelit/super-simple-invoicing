@@ -21,6 +21,8 @@ export type AppActions = {
   invoices: A.InvoicesActions;
   items: A.ItemsActions;
   payments: A.PaymentsActions;
+  settings: A.SettingsActions;
+  taxes: A.TaxActions;
 };
 
 export type AppViews = {};
