@@ -3,7 +3,7 @@ import { Link as RouterLink, useHistory, generatePath } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, Button, Typography, Menu, MenuItem, ListItemIcon } from '@material-ui/core';
 import { CellMaker } from '@grapecity/wijmo.grid.cellmaker';
-import { Edit, Visibility, Delete } from '@material-ui/icons';
+import { Edit, Delete } from '@material-ui/icons';
 import { FlexGridFilter } from '@grapecity/wijmo.react.grid.filter';
 import { FlexGrid, FlexGridColumn, FlexGridCellTemplate } from '@grapecity/wijmo.react.grid';
 import { BreadcrumbsCrumbProp, MenuButton, UndoButton } from 'components';
@@ -43,17 +43,11 @@ export const ItemsList: React.FC<ItemsListProps> = ({ actions, breadcrumbs, item
       handlers.closeMenu();
     },
 
-    show: () => {
-      if (!currentCustomer) return;
-      history.push(generatePath(Routes.ItemsView, { id: currentCustomer.id }));
-      handlers.closeMenu();
-    },
-
     delete: () => {
       if (!currentCustomer) return;
       const removedData = actions.items.remove([currentCustomer.id]);
       if (removedData) {
-        toast(<UndoButton message="Customer deleted." onClick={() => handlers.undo(removedData)} />);
+        toast(<UndoButton message="Item deleted." onClick={() => handlers.undo(removedData)} />);
       }
       handlers.closeMenu();
     },
@@ -65,9 +59,9 @@ export const ItemsList: React.FC<ItemsListProps> = ({ actions, breadcrumbs, item
   };
 
   const renderers = {
-    customerLink: CellMaker.makeLink({
-      href: Routes.ItemsView.replace(':id', '${item.id}'), // eslint-disable-line
-      click: (_, ctx) => history.push(generatePath(Routes.ItemsView, { id: ctx.item.id })),
+    editorLink: CellMaker.makeLink({
+      href: generatePath(Routes.ItemsEdit.replace(':id', '${item.id}')), // eslint-disable-line
+      click: (_, ctx) => history.push(generatePath(Routes.ItemsEdit, { id: ctx.item.id })),
     }),
 
     commonActions: (
@@ -83,7 +77,6 @@ export const ItemsList: React.FC<ItemsListProps> = ({ actions, breadcrumbs, item
     gridMenu: () => {
       const menuItems = [
         { label: 'Edit', icon: <Edit fontSize="small" />, handler: handlers.edit },
-        { label: 'View', icon: <Visibility fontSize="small" />, handler: handlers.show },
         { label: 'Delete', icon: <Delete fontSize="small" />, handler: handlers.delete },
       ];
       return (
@@ -125,7 +118,7 @@ export const ItemsList: React.FC<ItemsListProps> = ({ actions, breadcrumbs, item
         {renderers.gridMenu()}
         <FlexGrid {...gridCommonProps} itemsSource={availableData}>
           <FlexGridFilter />
-          <FlexGridColumn header="Name" binding="name" width="*" cellTemplate={renderers.customerLink} />
+          <FlexGridColumn header="Name" binding="name" width="*" cellTemplate={renderers.editorLink} />
           <FlexGridColumn header="Unit" binding="unitId" width={130} />
           <FlexGridColumn header="Price" binding="price" format="c2" width={130} />
           <FlexGridColumn allowPinning="None" width={66}>

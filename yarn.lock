@@ -1416,6 +1416,13 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
+"@grapecity/wijmo.chart@5.20203.748":
+  version "5.20203.748"
+  resolved "https://registry.yarnpkg.com/@grapecity/wijmo.chart/-/wijmo.chart-5.20203.748.tgz#42a17e11a2c3a0d33aa22d8e7637accaffb73230"
+  integrity sha512-ARskTC8JYeUZAnPa7ZvEPr+RlpqNc5nCA65wfJHjXc70r/ft03FHbilTyl6pmttuoXAHXKHlntrEPtKZGoA0CA==
+  dependencies:
+    "@grapecity/wijmo" "5.20203.748"
+
 "@grapecity/wijmo.grid.cellmaker@^5.20203.748":
   version "5.20203.748"
   resolved "https://registry.yarnpkg.com/@grapecity/wijmo.grid.cellmaker/-/wijmo.grid.cellmaker-5.20203.748.tgz#f68ec9481f4f578ee6926ae58a4c91840151949b"
@@ -1473,6 +1480,15 @@
   integrity sha512-LHRRlOMiUSaaMY6OhGm8/5h9/dH8u+9sD2gs5DfPHB6r6UKvXH0aJ89uTj+ATeV+do5CgMqJwp7sG8j52tkxIQ==
   dependencies:
     "@grapecity/wijmo" "5.20203.748"
+
+"@grapecity/wijmo.react.chart@^5.20203.748":
+  version "5.20203.748"
+  resolved "https://registry.yarnpkg.com/@grapecity/wijmo.react.chart/-/wijmo.react.chart-5.20203.748.tgz#c1f8a94ee483dfd7b4c2a581052b5d7cfa57b158"
+  integrity sha512-AvytMhBMIDC95/eCRJZJcuq39BWoEJA8u0nw7CxmAzbEUoABJL9zo1tG3KAiR0kSQb/3Z9gwe0WekzufVx9TwQ==
+  dependencies:
+    "@grapecity/wijmo" "5.20203.748"
+    "@grapecity/wijmo.chart" "5.20203.748"
+    "@grapecity/wijmo.react.base" "5.20203.748"
 
 "@grapecity/wijmo.react.grid.filter@^5.20203.748":
   version "5.20203.748"
@@ -1767,6 +1783,17 @@
   integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
+
+"@material-ui/lab@^4.0.0-alpha.57":
+  version "4.0.0-alpha.57"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.57.tgz#e8961bcf6449e8a8dabe84f2700daacfcafbf83a"
+  integrity sha512-qo/IuIQOmEKtzmRD2E4Aa6DB4A87kmY6h0uYhjUmrrgmEAgbbw9etXpWPVXuRK6AGIQCjFzV6WO2i21m1R4FCw==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@material-ui/utils" "^4.11.2"
+    clsx "^1.0.4"
+    prop-types "^15.7.2"
+    react-is "^16.8.0 || ^17.0.0"
 
 "@material-ui/styles@^4.11.2":
   version "4.11.2"
@@ -2102,6 +2129,11 @@
   integrity sha512-FNEH/HLmOk5GO70I52tKjs7WvGYckeE/SrnLX/ip7z2IGbffyd5zOUM1tZ10vsTphqm+VbDFI0oaXu0wcfQsAQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
+
+"@types/accounting@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@types/accounting/-/accounting-0.4.1.tgz#865d9f5694fd7c438fba34eb4bc82eec6f34cdd5"
+  integrity sha512-qIN2yvRFvTtUtzG3bs7NKnsqHCPwRIIZMvBNWxiyF4LfOBMhwbwmsefqOt1T7KfkvCgOOxWYVqvlnKKZARSHgg==
 
 "@types/anymatch@*":
   version "1.3.1"
@@ -2665,6 +2697,11 @@ accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
   dependencies:
     mime-types "~2.1.24"
     negotiator "0.6.2"
+
+accounting@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/accounting/-/accounting-0.4.1.tgz#87dd4103eff7f4460f1e186f5c677ed6cf566883"
+  integrity sha1-h91BA+/39EYPHhhvXGd+1s9WaIM=
 
 acorn-globals@^6.0.0:
   version "6.0.0"

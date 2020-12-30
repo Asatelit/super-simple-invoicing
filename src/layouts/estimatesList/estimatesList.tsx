@@ -7,14 +7,14 @@ import { Common } from 'layouts';
 import { BreadcrumbsCrumbProp } from 'components';
 import { Estimate } from 'types';
 import { Routes } from 'enums';
-import styles from './estimates.module.css';
+import styles from './estimatesList.module.css';
 
-export type EstimatesProps = {
+export type EstimatesListProps = {
   breadcrumbs?: BreadcrumbsCrumbProp[];
   estimates: Estimate[];
 };
 
-export const Estimates: React.FC<EstimatesProps> = ({ breadcrumbs, estimates }) => {
+export const EstimatesList: React.FC<EstimatesListProps> = ({ breadcrumbs, estimates }) => {
   const renderActions = (
     <Button variant="contained" color="primary" component={RouterLink} to={Routes.EstimatesCreate}>
       New Estimate
@@ -36,7 +36,7 @@ export const Estimates: React.FC<EstimatesProps> = ({ breadcrumbs, estimates }) 
           itemsSource={estimates}
         >
           <FlexGridFilter />
-          <FlexGridColumn header="Date" binding="expiryDate" format="MMM d yyyy" width={230} />
+          <FlexGridColumn header="Date" binding="estimateDate" format="MMM d yyyy" width={230} />
           <FlexGridColumn header="Customer" binding="customerId" width="*" />
           <FlexGridColumn header="Status" binding="status" width={130} />
           <FlexGridColumn header="Amount Due" binding="total" format="c2" width={130} />

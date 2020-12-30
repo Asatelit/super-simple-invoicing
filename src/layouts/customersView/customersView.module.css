@@ -1,0 +1,29 @@
+.root {
+  height: calc(100% - 56px);
+  overflow: hidden;
+}
+
+.menu {
+  height: 100%;
+  overflow: auto;
+  border-right: 1px solid var(--divider);
+}
+
+.number {
+  display: block;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: var(--background-paper);
+  font-size: 0.75em;
+  margin-top: 3px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

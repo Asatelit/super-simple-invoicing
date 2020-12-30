@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-toastify';
-import { Container, Button, TextField, TextFieldProps, GridProps, Tabs, Tab } from '@material-ui/core';
+import { Container, TextField, TextFieldProps, GridProps, Tabs, Tab } from '@material-ui/core';
 import { Common } from 'layouts';
 import { Settings as AppSettings, AppActions, Tax } from 'types';
 import { Form, FormDataProp, BreadcrumbsCrumbProp } from 'components';
@@ -11,7 +11,7 @@ export type SettingsProps = {
   actions: AppActions;
   breadcrumbs?: BreadcrumbsCrumbProp[];
   settings: AppSettings;
-  taxes: Tax[],
+  taxes: Tax[];
 };
 
 export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes, settings }) => {
@@ -23,12 +23,6 @@ export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes,
   }, [settings]);
 
   const updateData = (value: Partial<AppSettings>) => setSettingsData({ ...settingsData, ...value });
-
-  const renderActions = (
-    <Button type="submit" variant="contained" color="primary" form="SettingsForm">
-      Save
-    </Button>
-  );
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -187,7 +181,7 @@ export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes,
 
   return (
     <Container maxWidth="lg" className={styles.container}>
-      <Common title="Settings" breadcrumbs={breadcrumbs} actions={renderActions}>
+      <Common title="Settings" breadcrumbs={breadcrumbs}>
         <Tabs
           value={tab}
           variant="scrollable"
@@ -198,8 +192,10 @@ export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes,
           <Tab label="Company Information" />
           <Tab label="Tax Types" />
         </Tabs>
-        {tab === 0 && <Form id="SettingsForm" data={formSettingsData} onSubmit={handleOnSubmit} />}
-        {tab === 1 && <SettingsTaxesTab actions={actions} taxes={taxes} />}
+        {tab === 0 && (
+          <Form id="SettingsForm" data={formSettingsData} submit="Save" onSubmit={handleOnSubmit} />
+        )}
+        {tab === 1 && <SettingsTaxesTab actions={actions} settings={settings} taxes={taxes} />}
       </Common>
     </Container>
   );

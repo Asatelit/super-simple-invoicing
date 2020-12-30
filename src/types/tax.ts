@@ -9,3 +9,11 @@ export type Tax = {
   percent: number;
   updatedAt: Date;
 };
+
+export type TaxRecord = {
+  amount: number;
+  compoundAmount: string;
+  compoundTax: boolean;
+  percent: number;
+  taxId: string;
+};

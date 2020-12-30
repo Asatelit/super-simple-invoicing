@@ -3,6 +3,7 @@ export enum Routes {
   SignUp = '/create-account',
   Admin = '/admin',
   Dashboard = '/admin/dashboard',
+  Reports = '/admin/reports',
   // Customer
   CustomersList = '/admin/customers',
   CustomersCreate = '/admin/customers/create',
@@ -29,7 +30,8 @@ export enum Routes {
   // Expenses
   ExpensesList = '/admin/expenses',
   ExpensesCreate = '/admin/expenses/create',
-  // Other
-  Reports = '/admin/reports',
+  // Settings
   Settings = '/admin/settings',
+  SettingsTaxAdd = '/admin/settings/tax/add',
+  SettingsTaxEdit = '/admin/settings/tax/:id/edit',
 }

@@ -2,7 +2,8 @@ export type Customer = {
   avatar: string;
   contactName: string;
   createdAt: Date;
-  currencyId: string;
+  currencySymbol: string;
+  currencyFormat: string;
   email: string;
   id: string;
   media: string[];
@@ -27,4 +28,19 @@ export type Customer = {
   billingPhone: string;
   billingState: string;
   billingZip: string;
+};
+
+export type CustomerSummaryData = {
+  month?: string;
+  sales: number;
+  receipts: number;
+  expenses: number;
+  netIncome: number;
+};
+
+export type MappedCustomer = Customer & {
+  summary: {
+    monthly: CustomerSummaryData[];
+    overall: CustomerSummaryData;
+  };
 };

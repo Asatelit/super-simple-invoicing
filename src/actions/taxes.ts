@@ -51,6 +51,7 @@ export const createTaxesActions: Action<TaxActions> = (state, updateState) => ({
    */
   update: (data) => {
     const tax = state.taxes.find((tax) => data.id === tax.id);
+    console.info('update', tax);
 
     if (!tax) return null;
 

@@ -101,8 +101,8 @@ export const CreateItem: React.FC<CreateItemProps> = ({ actions, breadcrumbs }) 
               id="PrimaryCurrency"
               name="PrimaryCurrency"
               label="Primary Currency"
-              value={data.currencyId}
-              onChange={(e) => updateData({ currencyId: e.target.value })}
+              value={data.currencySymbol}
+              onChange={(e) => updateData({ currencySymbol: e.target.value })}
             />
           ),
         },

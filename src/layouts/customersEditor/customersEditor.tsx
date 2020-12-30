@@ -54,7 +54,6 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
   };
 
   const fillShippingAddress = () => {
-    console.info('fillShippingAddress');
     setData({
       ...data,
       shippingAddressLine1: data.billingAddressLine1 ?? '',
@@ -135,8 +134,8 @@ export const CustomersEditor: React.FC<CustomersEditorProps> = ({ actions, bread
             <TextField
               {...getCommonTextFieldProps('PrimaryCurrency')}
               label="Primary Currency"
-              value={data.currencyId ?? ''}
-              onChange={(e) => updateData({ currencyId: e.target.value })}
+              value={data.currencySymbol ?? ''}
+              onChange={(e) => updateData({ currencySymbol: e.target.value })}
             />
           ),
         },

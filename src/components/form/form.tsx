@@ -1,23 +1,37 @@
 import React, { Fragment, ReactElement, ReactNode } from 'react';
-import { Box, Divider, Grid, GridProps, Paper, Typography } from '@material-ui/core';
+import { Box, Divider, Grid, GridProps, Paper, Typography, Button } from '@material-ui/core';
 
 export type FormDataProp = {
   action?: ReactNode;
-  elements: { gridProps: GridProps; children: ReactElement }[];
-  label: string;
+  elements: { gridProps: GridProps; children: ReactElement | null }[];
+  label?: string;
   subtitle?: string;
 };
 
 export type FormProps = {
   id?: string;
   data: FormDataProp[];
+  className?: string;
+  gutter?: boolean;
+  paper?: boolean;
+  submit?: string;
   subtitle?: string;
   onSubmit?: (event: React.FormEvent) => void;
 };
 
-export const Form = ({ data, id = 'Form', onSubmit = () => null }: FormProps) => (
-  <Paper style={{ padding: '48px', marginBottom: '48px' }}>
-    <form id={id} onSubmit={onSubmit}>
+export const Form = ({
+  data,
+  submit,
+  id = 'Form',
+  paper = true,
+  gutter = true,
+  className = '',
+  onSubmit = () => null,
+}: FormProps) => {
+  const style = gutter ? { padding: '48px', marginBottom: '48px' } : {};
+
+  const renderForm = (
+    <form id={id} className={className} onSubmit={onSubmit}>
       {data.map(({ action, label, elements, subtitle }, groupKey) => (
         <React.Fragment key={`FormGroup${groupKey}`}>
           <Box
@@ -27,9 +41,11 @@ export const Form = ({ data, id = 'Form', onSubmit = () => null }: FormProps) =>
             style={{ marginBottom: '24px' }}
           >
             <div>
-              <Typography display="block" variant="h6">
-                {label}
-              </Typography>
+              {label && (
+                <Typography display="block" variant="h6">
+                  {label}
+                </Typography>
+              )}
               {subtitle && (
                 <Typography
                   display="block"
@@ -45,17 +61,23 @@ export const Form = ({ data, id = 'Form', onSubmit = () => null }: FormProps) =>
           </Box>
           <Grid container spacing={3}>
             <Fragment>
-              {elements.map(({ gridProps, children }, elementKey) => (
-                <Grid key={`FormGroup${groupKey}-FormControl${elementKey}`} {...gridProps}>
-                  {children}
-                </Grid>
-              ))}
+              {elements.map(({ gridProps, children }, elementKey) =>
+                children ? (
+                  <Grid key={`FormGroup${groupKey}-FormControl${elementKey}`} {...gridProps}>
+                    {children}
+                  </Grid>
+                ) : null,
+              )}
             </Fragment>
           </Grid>
           {groupKey < data.length - 1 && <Divider style={{ margin: '42px 0' }} />}
         </React.Fragment>
       ))}
-      <button type="submit" hidden />
+      <Button type="submit" hidden={!submit} variant="contained" color="primary" className="mt-4">
+        {submit}
+      </Button>
     </form>
-  </Paper>
-);
+  );
+
+  return paper ? <Paper style={style}>{renderForm}</Paper> : <>{renderForm}</>;
+};

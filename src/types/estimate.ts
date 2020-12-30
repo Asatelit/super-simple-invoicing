@@ -1,27 +1,27 @@
-import { Tax } from './tax';
-import { Item } from './item';
+import { ItemRecord, TaxRecord, Customer } from 'types';
 import { EstimateStatus } from '../enums';
 
 export type Estimate = {
   createdAt: Date;
   customerId: string;
-  discount: number;
+  discountAmount: number;
+  discountValue: number;
   discountPerItem: 'no' | 'yes';
   discountType: 'fixed' | 'percentage';
-  discountVal: number;
   estimateDate: Date;
   estimateNumber: string;
-  estimateTemplateId: string | null;
+  estimateTemplateId: string;
   expiryDate: Date;
   id: string;
   isDeleted: boolean;
-  items: Item[];
-  notes: string | null;
-  referenceNumber: string | null;
+  items: ItemRecord[];
+  notes: string;
+  referenceNumber: string;
   status: EstimateStatus;
   subTotal: number;
-  tax: number;
-  taxes: Tax[];
+  taxAmount: number;
+  taxPerItem: 'no' | 'yes';
+  taxes: TaxRecord[];
   total: number;
   updatedAt: Date;
 };
@@ -33,4 +33,8 @@ export type EstimateTemplate = {
   path: string;
   updatedAt: Date;
   view: string;
+};
+
+export type MappedEstimate = Estimate & {
+  customer: Customer | undefined;
 };

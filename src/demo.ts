@@ -1,3 +1,4 @@
+import { subDays, eachDayOfInterval, addDays } from 'date-fns';
 import { INIT_STATE } from './assets';
 import { getRandomInt, getTimestamp } from './utils';
 import { AppState } from './types';
@@ -74,6 +75,7 @@ export function generateDemoData(): AppState {
   }
 
   const { state, setState } = getFakeState(initialState);
+  const estimates = () => A.createEstimatesActions(state(), updateState);
 
   // State update helper
   const updateState = (value: Partial<AppState>) => {
@@ -99,16 +101,40 @@ export function generateDemoData(): AppState {
     }),
   );
 
-  // Generate Items
-  const estimates = () => A.createEstimatesActions(state(), updateState);
-  demoCustomers.forEach((customer, index) =>
-    estimates().add({
-      customerId: customer.id,
-      estimateDate: getTimestamp(),
-      estimateNumber: `EST-00000${index}`,
-      expiryDate: getTimestamp(),
-    }),
-  );
+  const dateRange = { start: subDays(new Date(), 5), end: new Date() };
+  const rangeDays = eachDayOfInterval(dateRange);
+
+  rangeDays.forEach((day) => {
+    const itemsList = state().items;
+    const itemsCount = itemsList.length - 1;
+    const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
+
+    for (let i = 1; i < getRandomInt(1, 3); i += 1) {
+      // Generate Estimates
+      const customersList = state().customers;
+      const estimatesList = state().estimates;
+
+      const estimate = estimates().add({
+        customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
+        estimateDate: day,
+        estimateNumber: `EST-00000${estimatesList.length}`,
+        expiryDate: addDays(day, getRandomInt(0, 30)),
+      });
+
+      itemIds.forEach((itemId) => {
+        const { price, unit, id } = itemsList[itemId];
+        estimates().addItem(
+          {
+            price,
+            unit,
+            itemId: id,
+            quantity: getRandomInt(1, 3),
+          },
+          estimate.id,
+        );
+      });
+    }
+  });
 
   // Generate Invoices
   const invoices = () => A.createInvoicesActions(state(), updateState);
@@ -127,7 +153,7 @@ export function generateDemoData(): AppState {
     payments().add({
       paymentDate: getTimestamp(),
       amount: getRandomInt(1, 100),
-      customerId: customer.name,
+      customerId: customer.id,
       paymentNumber: `PAY-00000${index}`,
     }),
   );
@@ -139,6 +165,7 @@ export function generateDemoData(): AppState {
       amount: getRandomInt(1, 100),
       expenseCategoryId: 'misc',
       expenseDate: getTimestamp(),
+      customerId: customer.id,
     }),
   );
 

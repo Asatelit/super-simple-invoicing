@@ -5,7 +5,8 @@ type CommonRequiredCustomerProps = 'name';
 type CommonOptionalCustomerProps =
   | 'avatar'
   | 'contactName'
-  | 'currencyId'
+  | 'currencySymbol'
+  | 'currencyFormat'
   | 'media'
   | 'email'
   | 'phone'
@@ -55,7 +56,8 @@ export const createCustomersActions: Action<CustomersActions> = (state, updateSt
       avatar: data.avatar ?? '',
       contactName: data.contactName ?? '',
       createdAt: getTimestamp(),
-      currencyId: data.currencyId ?? 'USD',
+      currencySymbol: data.currencySymbol ?? 'USD',
+      currencyFormat: data.currencyFormat ?? '%s %v',
       email: data.email ?? '',
       id: generateId(),
       media: [],
@@ -100,7 +102,8 @@ export const createCustomersActions: Action<CustomersActions> = (state, updateSt
       avatar: data.avatar ?? customer.avatar,
       contactName: data.contactName ?? customer.contactName,
       createdAt: customer.createdAt,
-      currencyId: data.currencyId ?? customer.currencyId,
+      currencySymbol: data.currencySymbol ?? customer.currencySymbol,
+      currencyFormat: data.currencyFormat ?? customer.currencyFormat,
       email: data.email ?? customer.email,
       id: customer.id,
       media: data.media ?? customer.media,

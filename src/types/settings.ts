@@ -1,5 +1,3 @@
-import { Currency } from './currency';
-
 export type Settings = {
   accountName: string;
   accountEmail: string;
@@ -15,7 +13,6 @@ export type Settings = {
   media: string[];
   phone: string;
   website: string;
-  currency: Currency;
   taxPerItem: boolean;
   estimateAutoGenerate: boolean;
   estimatePrefix: string;
@@ -24,13 +21,13 @@ export type Settings = {
   paymentAutoGenerate: boolean;
   paymentPrefix: string;
   carbonDateFormat: string;
-  currencies: Currency[];
   dateFormats: { displayDate: string; carbonFormatValue: string; momentFormatValue: string }[];
   fiscalYear: string; // "1-12"
   fiscalYears: { key: string; value: string }[];
   languages: { code: string; name: string }[];
   momentDateFormat: string;
-  selectedCurrency: string;
+  currencySymbol: string;
+  currencyFormat: string;
   selectedLanguage: string;
   timeZone: string; // "Europe/Paris"
   timeZones: { key: string; value: string }[]; // key: "(UTC-11:00) Midway", value: "Pacific/Midway"

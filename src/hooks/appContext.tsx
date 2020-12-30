@@ -1,5 +1,6 @@
-import localForage from 'localforage';
 import React, { createContext, useState, useEffect } from 'react';
+import localForage from 'localforage';
+import accounting from 'accounting';
 import {
   AppContext,
   AppState,
@@ -36,11 +37,28 @@ export const AppContextProvider: React.FC = ({ children }) => {
       let demoData: Partial<AppState> = {};
       // Load data to display the application in demo mode
       if (IS_DEMO_MODE) demoData = generateDemoData();
-      console.info({ IS_DEMO_MODE });
       // Rehydrate the app state
-      const state = await readContextFromLocalStorage(INIT_STATE);
+      const rehydratedState = await readContextFromLocalStorage(INIT_STATE);
+      // Accounting settings
+      accounting.settings = {
+        currency: {
+          symbol: rehydratedState.settings.currencySymbol, // default currency symbol is '$'
+          format: {
+            pos: rehydratedState.settings.currencyFormat, // controls output: %s = symbol, %v = value/number
+            zero: rehydratedState.settings.currencyFormat, // controls output: %s = symbol, %v = value/number
+          },
+          decimal: '.', // decimal point separator
+          thousand: ',', // thousands separator
+          precision: 2, // decimal places
+        },
+        number: {
+          precision: 2,
+          thousand: ',',
+          decimal: '.',
+        },
+      };
       // Update the app state
-      setState({ ...state, ...demoData, isLoading: false });
+      setState({ ...rehydratedState, ...demoData, isLoading: false });
     })();
   }, []);
 

@@ -1,21 +1,32 @@
 import React, { useState, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, generatePath } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Edit, Delete } from '@material-ui/icons';
-import { Paper, Box, Typography, Menu, MenuItem, ListItemIcon } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Paper,
+  Switch,
+  Typography,
+} from '@material-ui/core';
 import { FlexGridFilter } from '@grapecity/wijmo.react.grid.filter';
 import { FlexGrid, FlexGridColumn, FlexGridCellTemplate } from '@grapecity/wijmo.react.grid';
 import { MenuButton, UndoButton } from 'components';
-import { AppActions, Tax } from 'types';
+import { AppActions, Settings, Tax } from 'types';
 import { formatItem } from 'utils';
 import { Routes } from 'enums';
 
 export type SettingsTaxesTabProps = {
+  settings: Settings;
   taxes: Tax[];
   actions: AppActions;
 };
 
-export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
+export const SettingsTaxesTab = ({ actions, settings, taxes }: SettingsTaxesTabProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentItem, setCurrentItem] = useState<Tax | null>(null);
   const history = useHistory();
@@ -48,7 +59,7 @@ export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
 
     edit: () => {
       if (!currentItem) return;
-      history.push(Routes.CustomersEdit.replace(':id', currentItem.id));
+      history.push(generatePath(Routes.SettingsTaxEdit, { id: currentItem.id }));
       handlers.closeMenu();
     },
 
@@ -64,6 +75,10 @@ export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
     undo: (items: Tax[]) => {
       const restoringDataIds = items.map((item) => item.id);
       actions.taxes.undoRemove(restoringDataIds);
+    },
+
+    toggleTaxPerItem: () => {
+      actions.settings.update({ taxPerItem: !settings.taxPerItem });
     },
   };
 
@@ -98,7 +113,7 @@ export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
   return (
     <Paper style={{ padding: '48px', marginBottom: '48px' }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" style={{ marginBottom: '24px' }}>
-        <div>
+        <div style={{ marginRight: '24px' }}>
           <Typography display="block" variant="h6">
             Tax Types
           </Typography>
@@ -107,6 +122,9 @@ export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
             on the invoice.
           </Typography>
         </div>
+        <Button variant="outlined" color="primary" onClick={() => history.push(Routes.SettingsTaxAdd)}>
+          Add Tax
+        </Button>
       </Box>
       {renderMenu()}
       <FlexGrid {...gridCommonProps} itemsSource={availableTaxes}>
@@ -118,6 +136,26 @@ export const SettingsTaxesTab = ({ actions, taxes }: SettingsTaxesTabProps) => {
           <FlexGridCellTemplate cellType="Cell" template={renderGridActionsCell} />
         </FlexGridColumn>
       </FlexGrid>
+      <FormControlLabel
+        className="mt-4"
+        label={
+          <>
+            <Typography variant="body1">Tax Per Item</Typography>
+            <Typography variant="body2" display="block" color="textSecondary">
+              Enable this if you want to add taxes to individual invoice items. By default, taxes are added
+              directly to the invoice.
+            </Typography>
+          </>
+        }
+        control={
+          <Switch
+            checked={settings.taxPerItem}
+            onChange={handlers.toggleTaxPerItem}
+            color="primary"
+            inputProps={{ 'aria-label': 'Tax Per Item' }}
+          />
+        }
+      />
     </Paper>
   );
 };

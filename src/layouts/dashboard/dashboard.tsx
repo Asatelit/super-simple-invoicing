@@ -197,7 +197,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
 
   const renderInvoicesWidget = (
     <div className={styles.widget}>
-      <Typography variant="h5" component="h2" gutterBottom>
+      <Typography variant="h5" component="h2" className="mb-4">
         Due Invoices
       </Typography>
       <FlexGrid {...gridCommonProps} itemsSource={availableInvoices}>
@@ -220,7 +220,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
 
   const renderEstimatesWidget = (
     <div className={styles.widget}>
-      <Typography variant="h5" component="h2" gutterBottom>
+      <Typography variant="h5" component="h2" className="mb-4">
         Recent Estimates
       </Typography>
       <FlexGrid {...gridCommonProps} itemsSource={availableEstimates}>
