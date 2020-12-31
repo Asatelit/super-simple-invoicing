@@ -7,15 +7,15 @@ import { CellMaker } from '@grapecity/wijmo.grid.cellmaker';
 import { FlexGridFilter } from '@grapecity/wijmo.react.grid.filter';
 import { FlexGrid, FlexGridColumn, FlexGridCellTemplate } from '@grapecity/wijmo.react.grid';
 import { BreadcrumbsCrumbProp, MenuButton, UndoButton } from 'components';
+import { AppActions, Customer, MappedCustomer } from 'types';
 import { formatItem } from 'utils';
-import { AppActions, Customer } from 'types';
 import { Common } from 'layouts';
 import { Routes } from 'enums';
 import styles from './customersList.module.css';
 
 export type CustomersListProps = {
   actions: AppActions;
-  customers: Customer[];
+  customers: MappedCustomer[];
   breadcrumbs?: BreadcrumbsCrumbProp[];
 };
 
@@ -129,9 +129,13 @@ export const CustomersList: React.FC<CustomersListProps> = ({ actions, breadcrum
             header="Display Name"
             binding="name"
             cellTemplate={renderers.customerLink}
+            minWidth={150}
+            width="*"
           />
           <FlexGridColumn header="Contact Name" binding="contactName" width="*" />
           <FlexGridColumn header="Phone" binding="phone" width={160} />
+          <FlexGridColumn header="Amount Due" binding=""  width={140} format="c0" />
+          <FlexGridColumn header="Added On" binding="createdAt" format="MMM d yyyy" width={140} />
           <FlexGridColumn allowPinning="None" width={66}>
             <FlexGridCellTemplate cellType="Cell" template={renderers.gridActionsCell} />
           </FlexGridColumn>

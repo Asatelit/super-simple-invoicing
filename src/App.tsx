@@ -1,6 +1,6 @@
 import React, { Fragment, ReactElement, useContext, useEffect, useCallback, useMemo } from 'react';
 import { Switch as SwitchRoute, Route, Redirect, useHistory } from 'react-router-dom';
-import { eachMonthOfInterval, startOfYear, startOfMonth, endOfYear, endOfMonth } from 'date-fns';
+import { eachMonthOfInterval, startOfYear, startOfMonth, endOfYear, endOfMonth, format } from 'date-fns';
 import clsx from 'clsx';
 import {
   AppBar,
@@ -21,7 +21,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import SearchIcon from '@material-ui/icons/Search';
 import { appContext } from './hooks';
 import { navItems } from './components';
-import { Routes, Months } from './enums';
+import { Routes } from './enums';
 import { flatten } from './utils';
 import { MappedInvoice, MappedCustomer, MappedEstimate, DateRange } from './types';
 import * as L from './layouts';
@@ -99,20 +99,10 @@ function App() {
             ...customer,
             summary: {
               overall: { ...getOverallData() },
-              monthly: [
-                { ...getOverallData({ start: startOfMonth(months[0]), end: endOfMonth(months[0]) }), month: 'Jan' },
-                { ...getOverallData({ start: startOfMonth(months[1]), end: endOfMonth(months[1]) }), month: 'Feb' },
-                { ...getOverallData({ start: startOfMonth(months[2]), end: endOfMonth(months[2]) }), month: 'Mar' },
-                { ...getOverallData({ start: startOfMonth(months[3]), end: endOfMonth(months[3]) }), month: 'Apr' },
-                { ...getOverallData({ start: startOfMonth(months[4]), end: endOfMonth(months[4]) }), month: 'May' },
-                { ...getOverallData({ start: startOfMonth(months[5]), end: endOfMonth(months[5]) }), month: 'Jun' },
-                { ...getOverallData({ start: startOfMonth(months[6]), end: endOfMonth(months[6]) }), month: 'Jul' },
-                { ...getOverallData({ start: startOfMonth(months[7]), end: endOfMonth(months[7]) }), month: 'Aug' },
-                { ...getOverallData({ start: startOfMonth(months[8]), end: endOfMonth(months[8]) }), month: 'Sep' },
-                { ...getOverallData({ start: startOfMonth(months[9]), end: endOfMonth(months[9]) }), month: 'Oct' },
-                { ...getOverallData({ start: startOfMonth(months[10]), end: endOfMonth(months[10]) }), month: 'Nov' },
-                { ...getOverallData({ start: startOfMonth(months[11]), end: endOfMonth(months[11]) }), month: 'Dec' },
-              ],
+              monthly: months.map(month => ({
+                ...getOverallData({ start: startOfMonth(month), end: endOfMonth(month) }),
+                month: format(month, 'MMM')
+              }))
             },
           };
         }),
@@ -141,16 +131,16 @@ function App() {
   const layoutRoutes = [
     { path: Routes.Admin, name: 'Admin', c: <></> },
     { path: Routes.Dashboard, name: 'Dashboard', c: <L.Dashboard actions={actions} invoices={invoices} estimates={estimates} customers={customers} /> },
-    { path: Routes.CustomersList, name: 'Customers', c: <L.CustomersList actions={actions} customers={customers} /> },
+    { path: Routes.CustomersList, name: 'Customers', c: <L.CustomersList actions={actions} customers={mapped.customers} /> },
     { path: Routes.CustomersCreate, name: 'New Customer', c: <L.CustomersEditor actions={actions} /> },
     { path: Routes.CustomersEdit, name: 'Edit Customer', c: <L.CustomersEditor actions={actions} customers={customers} /> },
     { path: Routes.CustomersView, name: 'Customers', c: <L.CustomersView customers={mapped.customers} /> },
     { path: Routes.ItemsList, name: 'Items', c: <L.ItemsList actions={actions} items={items} /> },
     { path: Routes.ItemsEdit, name: 'Edit Item', c: <L.ItemsEditor actions={actions} items={items} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.ItemsCreate, name: 'New Item', c: <L.ItemsEditor actions={actions} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
-    { path: Routes.EstimatesList, name: 'Estimates', c: <L.EstimatesList estimates={estimates} /> },
+    { path: Routes.EstimatesList, name: 'Estimates', c: <L.EstimatesList actions={actions} estimates={estimates} customers={customers} /> },
     { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} /> },
-    { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList invoices={invoices} /> },
+    { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
     { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} /> },
     { path: Routes.PaymentsList, name: 'Payments', c: <L.Payments payments={payments} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.Expenses expenses={expenses} /> },

@@ -15,7 +15,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { Edit, Visibility, Delete, CheckCircle, Description } from '@material-ui/icons';
-import { MenuButton, UndoButton } from 'components';
+import { MenuButton, UndoButton, StatusChip } from 'components';
 import { AppActions, Customer, Estimate, Invoice } from 'types';
 import { Routes } from 'enums';
 import { formatItem } from 'utils';
@@ -177,23 +177,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
     { label: 'Delete', icon: <Delete fontSize="small" />, handler: handlers.estimate.delete },
   ];
 
-  const renderInvoiceCustomerLink = CellMaker.makeLink({
-    href: Routes.InvoicesView.replace(':id', '${item.id}'), // eslint-disable-line
-    click: (_, ctx) => history.push(generatePath(Routes.InvoicesView, { id: ctx.item.id })),
-  });
+  const renderers = {
+    gridStatusCell: (cell: { item: Invoice | Estimate }) => (
+      <StatusChip status={cell.item.status} size="small" label={cell.item.status} />
+    ),
 
-  const renderEstimateCustomerLink = CellMaker.makeLink({
-    href: Routes.EstimatesView.replace(':id', '${item.id}'), // eslint-disable-line
-    click: (_, ctx) => history.push(generatePath(Routes.EstimatesView, { id: ctx.item.id })),
-  });
+    invoiceCustomerLink: CellMaker.makeLink({
+      href: Routes.InvoicesView.replace(':id', '${item.id}'), // eslint-disable-line
+      click: (_, ctx) => history.push(generatePath(Routes.InvoicesView, { id: ctx.item.id })),
+    }),
 
-  const renderInvoiceActionsCell = (cell: { item: Invoice }) => (
-    <MenuButton onClick={(e) => handleOnClickInvoiceMenu(e, cell.item)} />
-  );
+    estimateCustomerLink: CellMaker.makeLink({
+      href: Routes.EstimatesView.replace(':id', '${item.id}'), // eslint-disable-line
+      click: (_, ctx) => history.push(generatePath(Routes.EstimatesView, { id: ctx.item.id })),
+    }),
 
-  const renderEstimateActionsCell = (cell: { item: Estimate }) => (
-    <MenuButton onClick={(e) => handleOnClickEstimateMenu(e, cell.item)} />
-  );
+    invoiceActionsCell: (cell: { item: Invoice }) => (
+      <MenuButton onClick={(e) => handleOnClickInvoiceMenu(e, cell.item)} />
+    ),
+
+    estimateActionsCell: (cell: { item: Estimate }) => (
+      <MenuButton onClick={(e) => handleOnClickEstimateMenu(e, cell.item)} />
+    ),
+  };
 
   const renderInvoicesWidget = (
     <div className={styles.widget}>
@@ -207,12 +213,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
           binding="customerId"
           width="*"
           dataMap={customersMap}
-          cellTemplate={renderInvoiceCustomerLink}
+          cellTemplate={renderers.invoiceCustomerLink}
         />
-        <FlexGridColumn header="Status" binding="status" />
+        <FlexGridColumn header="Status" binding="status">
+          <FlexGridCellTemplate cellType="Cell" template={renderers.gridStatusCell} />
+        </FlexGridColumn>
         <FlexGridColumn header="Amount Due" binding="total" format="c2" />
         <FlexGridColumn allowPinning="None" width={66}>
-          <FlexGridCellTemplate cellType="Cell" template={renderInvoiceActionsCell} />
+          <FlexGridCellTemplate cellType="Cell" template={renderers.invoiceActionsCell} />
         </FlexGridColumn>
       </FlexGrid>
     </div>
@@ -230,12 +238,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
           binding="customerId"
           width="*"
           dataMap={customersMap}
-          cellTemplate={renderEstimateCustomerLink}
+          cellTemplate={renderers.estimateCustomerLink}
         />
-        <FlexGridColumn header="Status" binding="status" />
+        <FlexGridColumn header="Status" binding="status">
+          <FlexGridCellTemplate cellType="Cell" template={renderers.gridStatusCell} />
+        </FlexGridColumn>
         <FlexGridColumn header="Amount Due" binding="total" format="c2" />
         <FlexGridColumn allowPinning="None" width={66}>
-          <FlexGridCellTemplate cellType="Cell" template={renderEstimateActionsCell} />
+          <FlexGridCellTemplate cellType="Cell" template={renderers.estimateActionsCell} />
         </FlexGridColumn>
       </FlexGrid>
     </div>

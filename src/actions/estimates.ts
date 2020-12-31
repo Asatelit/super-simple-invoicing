@@ -40,8 +40,8 @@ export type EstimatesActions = {
   add: (data: EstimateActionsAddProps) => Estimate;
   addItem: (data: EstimateActionsAddItemProps, estimateId: string) => Estimate | null;
   update: (data: EstimateActionsUpdateProps) => Estimate | null;
-  remove: (ids: string[]) => Estimate[];
-  undoRemove: (ids: string[]) => Estimate[];
+  remove: (ids: string[]) => Estimate[] | null;
+  undoRemove: (ids: string[]) => Estimate[] | null;
   markAccepted: (ids: string[]) => Estimate[];
   markRejected: (ids: string[]) => Estimate[];
   markSent: (ids: string[]) => Estimate[];
@@ -202,6 +202,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
      */
     remove: (ids) => {
       const removedData = state.estimates.filter((estimate) => ids.includes(estimate.id));
+      if (!removedData.length) return null;
       const estimates = state.estimates.map((item) =>
         ids.includes(item.id) ? { ...item, isDeleted: true } : item,
       );
@@ -214,6 +215,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
      */
     undoRemove: (ids) => {
       const recoveredData = state.estimates.filter((estimate) => ids.includes(estimate.id));
+      if (!recoveredData.length) return null;
       const estimates = state.estimates.map((item) =>
         ids.includes(item.id) ? { ...item, isDeleted: false } : item,
       );
