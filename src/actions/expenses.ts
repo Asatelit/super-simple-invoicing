@@ -19,8 +19,7 @@ type UpdateExpenseData = Pick<
 export type ExpensesActions = {
   add: (data: AddExpenseData) => Expense;
   update: (data: UpdateExpenseData) => Expense | null;
-  remove: (ids: string[]) => void;
-  undoRemove: (ids: string[]) => void;
+  delete: (ids: string[]) => Expense[] | null;
 };
 
 export const createExpensesActions: Action<ExpensesActions> = (state, updateState) => ({
@@ -74,20 +73,11 @@ export const createExpensesActions: Action<ExpensesActions> = (state, updateStat
   /**
    * Deletes an expense.
    */
-  remove: (ids) => {
-    const expenses = state.expenses.map((item) =>
-      ids.includes(item.id) ? { ...item, isDeleted: true } : item,
-    );
+  delete: (ids) => {
+    const removedData = state.expenses.filter((payment) => ids.includes(payment.id));
+    if (!removedData.length) return null;
+    const expenses = state.expenses.filter((item) => !ids.includes(item.id));
     updateState({ expenses });
-  },
-
-  /**
-   * Undo delete.
-   */
-  undoRemove: (ids) => {
-    const expenses = state.expenses.map((item) =>
-      ids.includes(item.id) ? { ...item, isDeleted: false } : item,
-    );
-    updateState({ expenses });
+    return removedData;
   },
 });

@@ -2,24 +2,24 @@ import { Action, Payment, Optional } from '../types';
 import { getTimestamp, generateId } from '../utils';
 
 type CommonOptionalPaymentProps = 'invoiceId' | 'paymentMode' | 'notes';
+type CommonRequiredPaymentProps = 'customerId' | 'paymentDate' | 'paymentNumber' | 'amount';
 
 // prettier-ignore
 type AddPaymentData = Pick<
   Optional<Payment, CommonOptionalPaymentProps>,
-  'customerId' | 'paymentDate' | 'paymentNumber' | 'amount' | CommonOptionalPaymentProps
+  CommonRequiredPaymentProps | CommonOptionalPaymentProps
 >;
 
 // prettier-ignore
 type UpdatePaymentData = Pick<
   Optional<Payment, 'customerId' | 'paymentDate' | 'paymentNumber' | 'amount' | CommonOptionalPaymentProps>,
-  'id' | 'customerId' | 'paymentDate' | 'paymentNumber' | 'amount' | CommonOptionalPaymentProps
+  'id' | CommonRequiredPaymentProps | CommonOptionalPaymentProps
 >;
 
 export type PaymentsActions = {
   add: (data: AddPaymentData) => Payment;
   update: (data: UpdatePaymentData) => Payment | null;
-  remove: (ids: string[]) => void;
-  undoRemove: (ids: string[]) => void;
+  delete: (ids: string[]) => Payment[] | null;
 };
 
 export const createPaymentsActions: Action<PaymentsActions> = (state, updateState) => ({
@@ -75,16 +75,11 @@ export const createPaymentsActions: Action<PaymentsActions> = (state, updateStat
   /**
    * Deletes an payment.
    */
-  remove: (ids) => {
-    const payments = state.payments.map((item) => (ids.includes(item.id) ? { ...item, isDeleted: true } : item));
+  delete: (ids) => {
+    const removedData = state.payments.filter((payment) => ids.includes(payment.id));
+    if (!removedData.length) return null;
+    const payments = state.payments.filter((item) => !ids.includes(item.id));
     updateState({ payments });
-  },
-
-  /**
-   * Undo delete.
-   */
-  undoRemove: (ids) => {
-    const payments = state.payments.map((item) => (ids.includes(item.id) ? { ...item, isDeleted: false } : item));
-    updateState({ payments });
+    return removedData;
   },
 });

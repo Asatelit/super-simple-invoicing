@@ -27,9 +27,12 @@ export enum Routes {
   // Payments
   PaymentsList = '/admin/payments',
   PaymentsCreate = '/admin/payments/create',
+  PaymentsEdit = '/admin/payments/:id/edit',
+  PaymentsView = '/admin/payments/:id/view',
   // Expenses
   ExpensesList = '/admin/expenses',
   ExpensesCreate = '/admin/expenses/create',
+  ExpensesEdit = '/admin/expenses/:id/edit',
   // Settings
   Settings = '/admin/settings',
   SettingsTaxAdd = '/admin/settings/tax/add',

@@ -155,6 +155,7 @@ export function generateDemoData(): AppState {
       amount: getRandomInt(1, 100),
       customerId: customer.id,
       paymentNumber: `PAY-00000${index}`,
+      paymentMode: 'Bank Transfer',
     }),
   );
 
@@ -163,7 +164,7 @@ export function generateDemoData(): AppState {
   demoCustomers.forEach((customer, index) =>
     expenses().add({
       amount: getRandomInt(1, 100),
-      expenseCategoryId: 'misc',
+      expenseCategoryId: 'Misc',
       expenseDate: getTimestamp(),
       customerId: customer.id,
     }),

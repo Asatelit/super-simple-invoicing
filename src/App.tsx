@@ -142,8 +142,8 @@ function App() {
     { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} /> },
     { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
     { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} /> },
-    { path: Routes.PaymentsList, name: 'Payments', c: <L.Payments payments={payments} /> },
-    { path: Routes.ExpensesList, name: 'Expenses', c: <L.Expenses expenses={expenses} /> },
+    { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
+    { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.Reports, name: 'Reports', c: <></> },
     { path: Routes.Settings, name: 'Settings', exact: false, c: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];

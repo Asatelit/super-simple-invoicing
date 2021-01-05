@@ -83,14 +83,11 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({ actions, breadcrumbs
 
     send: () => alert('WIP'),
 
-    undo: (customers: Invoice[]) => {
-      const restoringDataIds = customers.map((item) => item.id);
+    undo: (data: Invoice[]) => {
+      const restoringDataIds = data.map((item) => item.id);
       actions.invoices.undoRemove(restoringDataIds);
     },
 
-    /**
-     * Mark as sent.
-     */
     markSent: () => {
       if (!currentEstimate) return;
       const removedData = actions.invoices.markSent([currentEstimate.id]);
