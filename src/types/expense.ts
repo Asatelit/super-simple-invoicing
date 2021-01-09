@@ -2,12 +2,12 @@ export type Expense = {
   amount: number;
   attachmentReceipt: string;
   createdAt: Date;
-  expenseCategoryId: string;
+  customerId: string;
+  expenseCategory: string;
   expenseDate: Date;
   id: string;
   notes: string;
   updatedAt: Date;
-  customerId: string;
 };
 
 /**

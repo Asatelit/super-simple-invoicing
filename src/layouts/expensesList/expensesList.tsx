@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link as RouterLink, useHistory, generatePath } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Container, ListItemIcon, Menu, MenuItem, Typography } from '@material-ui/core';
-import { Edit, Delete, CheckCircle, Description, Reply, Visibility } from '@material-ui/icons';
+import { Edit, Delete } from '@material-ui/icons';
 import { DataMap } from '@grapecity/wijmo.grid';
 import { FlexGrid, FlexGridColumn, FlexGridCellTemplate } from '@grapecity/wijmo.react.grid';
 import { FlexGridFilter } from '@grapecity/wijmo.react.grid.filter';
@@ -123,8 +123,7 @@ export const ExpensesList: React.FC<ExpensesListProps> = ({ actions, breadcrumbs
           <FlexGridColumn header="Date" binding="createdAt" format="MMM d yyyy" width={140} />
           <FlexGridColumn
             header="Category"
-            binding="expenseCategoryId"
-            width="*"
+            binding="expenseCategory"
             minWidth={200}
             cellTemplate={renderers.gridCategoryCell}
           />

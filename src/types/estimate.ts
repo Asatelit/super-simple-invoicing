@@ -1,4 +1,4 @@
-import { ItemRecord, TaxRecord, Customer } from 'types';
+import { LineItem, TaxRecord, Customer } from 'types';
 import { EstimateStatus } from '../enums';
 
 export type Estimate = {
@@ -14,14 +14,14 @@ export type Estimate = {
   expiryDate: Date;
   id: string;
   isDeleted: boolean;
-  items: ItemRecord[];
+  lineItems: LineItem[];
   notes: string;
   referenceNumber: string;
   status: EstimateStatus;
   subTotal: number;
   taxAmount: number;
   taxPerItem: 'no' | 'yes';
-  taxes: TaxRecord[];
+  lineTaxes: TaxRecord[];
   total: number;
   updatedAt: Date;
 };

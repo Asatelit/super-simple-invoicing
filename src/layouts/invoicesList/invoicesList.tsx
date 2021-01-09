@@ -104,8 +104,8 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({ actions, breadcrumbs
     ),
 
     gridEstimateCell: CellMaker.makeLink({
-      href: generatePath(Routes.EstimatesEdit.replace(':id', '${item.id}')), // eslint-disable-line
-      click: (_, ctx) => history.push(generatePath(Routes.EstimatesEdit, { id: ctx.item.id })),
+      href: generatePath(Routes.InvoicesEdit.replace(':id', '${item.id}')), // eslint-disable-line
+      click: (_, ctx) => history.push(generatePath(Routes.InvoicesEdit, { id: ctx.item.id })),
     }),
 
     gridActionsCell: (cell: { item: Invoice }) => (

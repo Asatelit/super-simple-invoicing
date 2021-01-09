@@ -4,34 +4,50 @@ import { getRandomInt, getTimestamp } from './utils';
 import { AppState } from './types';
 import * as A from './actions';
 
-const names = [
-  'Jared Barnett',
-  'Julia Holland',
-  'Renee Kelley',
-  'Marsha Foster',
-  'Derek Ward',
-  'Robert Simpson',
-  'Jeremy Bailey',
-  'Scott Owens',
-  'Yolanda Bryant',
-  'Susan Lynch',
-  'Willard Tucker',
-  'Juanita Crawford',
-];
-
-const products = [
-  'T-shirt',
-  'Bead Necklace Burnt Sienna Cord',
-  'Ara Teardrop Pendant',
-  'Ryn Necklace - Twilight',
-  'Golden State Sea Salt Soap',
-  'Lakota Sea Salt Soap',
-  'Hella Cheer Riso Card',
-  'Cali Cacti Card',
-  'Beeswax Party Candles',
-  'Mini Brick Earrings',
-  'Little Colorspike - No. 3',
-];
+const fake = {
+  names: [
+    'Jared Barnett',
+    'Julia Holland',
+    'Renee Kelley',
+    'Marsha Foster',
+    'Derek Ward',
+    'Robert Simpson',
+    'Jeremy Bailey',
+    'Scott Owens',
+    'Yolanda Bryant',
+    'Susan Lynch',
+    'Willard Tucker',
+    'Juanita Crawford',
+  ],
+  products: [
+    'T-shirt',
+    'Bead Necklace Burnt Sienna Cord',
+    'Ara Teardrop Pendant',
+    'Ryn Necklace - Twilight',
+    'Golden State Sea Salt Soap',
+    'Lakota Sea Salt Soap',
+    'Hella Cheer Riso Card',
+    'Cali Cacti Card',
+    'Beeswax Party Candles',
+    'Mini Brick Earrings',
+    'Little Colorspike - No. 3',
+  ],
+  expenseCategories: [
+    'Tolls',
+    'Taxi & Parking',
+    'Insurance',
+    'Lease payments',
+    'Rent',
+    'Advertising',
+    'Education and Training',
+    'Restaurants/Dining',
+    'Office Supplies',
+    'Bank Fees',
+    'Taxes & Licenses',
+    'Accounting',
+    'Phone',
+  ],
+};
 
 // Generate phone numbers for use as test data
 function createPhoneNumber(arr: number[]) {
@@ -85,7 +101,7 @@ export function generateDemoData(): AppState {
 
   // Generate Customers
   const customers = () => A.createCustomersActions(state(), updateState);
-  const demoCustomers = names.map((name) =>
+  const demoCustomers = fake.names.map((name) =>
     customers().add({
       name,
       phone: createPhoneNumber(Array.from(String(getRandomInt(1000000000, 9999999999)), Number)),
@@ -94,7 +110,7 @@ export function generateDemoData(): AppState {
 
   // Generate Items
   const items = () => A.createItemsActions(state(), updateState);
-  products.forEach((name) =>
+  fake.products.forEach((name) =>
     items().add({
       name,
       price: getRandomInt(1, 100),
@@ -161,10 +177,10 @@ export function generateDemoData(): AppState {
 
   // Generate Expenses
   const expenses = () => A.createExpensesActions(state(), updateState);
-  demoCustomers.forEach((customer, index) =>
+  demoCustomers.forEach((customer) =>
     expenses().add({
       amount: getRandomInt(1, 100),
-      expenseCategoryId: 'Misc',
+      expenseCategory: fake.expenseCategories[getRandomInt(0, fake.expenseCategories.length - 1)],
       expenseDate: getTimestamp(),
       customerId: customer.id,
     }),

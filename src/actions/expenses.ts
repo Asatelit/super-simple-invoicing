@@ -2,7 +2,7 @@ import { Action, Expense, Optional } from '../types';
 import { getTimestamp, generateId } from '../utils';
 
 type CommonOptionalExpenseProps = 'customerId' | 'notes' | 'attachmentReceipt';
-type CommonRequiredExpenseProps = 'expenseDate' | 'amount' | 'expenseCategoryId';
+type CommonRequiredExpenseProps = 'expenseDate' | 'amount' | 'expenseCategory';
 
 // prettier-ignore
 type AddExpenseData = Pick<
@@ -31,7 +31,7 @@ export const createExpensesActions: Action<ExpensesActions> = (state, updateStat
       amount: data.amount,
       attachmentReceipt: data.attachmentReceipt ?? '',
       createdAt: getTimestamp(),
-      expenseCategoryId: data.expenseCategoryId,
+      expenseCategory: data.expenseCategory,
       expenseDate: data.expenseDate,
       id: generateId(),
       notes: data.notes ?? '',
@@ -57,7 +57,7 @@ export const createExpensesActions: Action<ExpensesActions> = (state, updateStat
       ...current,
       amount: data.amount ?? current.amount,
       attachmentReceipt: data.attachmentReceipt ?? current.attachmentReceipt,
-      expenseCategoryId: data.expenseCategoryId ?? current.expenseCategoryId,
+      expenseCategory: data.expenseCategory ?? current.expenseCategory,
       expenseDate: data.expenseDate ?? current.expenseDate,
       notes: data.notes ?? current.notes,
       updatedAt: getTimestamp(),

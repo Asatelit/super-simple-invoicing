@@ -1,9 +1,14 @@
 import React, { Fragment, ReactElement, ReactNode } from 'react';
 import { Box, Divider, Grid, GridProps, Paper, Typography, Button } from '@material-ui/core';
 
+export type FormDataElementProp = {
+  gridProps: GridProps;
+  children: ReactElement | null;
+};
+
 export type FormDataProp = {
   action?: ReactNode;
-  elements: { gridProps: GridProps; children: ReactElement | null }[];
+  elements: FormDataElementProp[];
   label?: string;
   subtitle?: string;
 };
@@ -59,7 +64,7 @@ export const Form = ({
             </div>
             {action}
           </Box>
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             <Fragment>
               {elements.map(({ gridProps, children }, elementKey) =>
                 children ? (

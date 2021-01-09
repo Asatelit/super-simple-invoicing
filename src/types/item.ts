@@ -12,7 +12,7 @@ export type Item = {
   updatedAt: Date;
 };
 
-export type ItemRecord = {
+export type LineItem = {
   amount: number;
   description: string;
   discountAmount: number;
@@ -22,7 +22,7 @@ export type ItemRecord = {
   price: number;
   quantity: number;
   taxAmount: number;
-  taxes: TaxRecord[];
+  lineTaxes: TaxRecord[];
   total: number;
   unit: string;
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, generatePath } from 'react-router-dom';
+import { useParams, generatePath, Link as RouterLink } from 'react-router-dom';
 import { Grid, Button, Container, List, Paper } from '@material-ui/core';
 import { Common } from 'layouts';
 import { BreadcrumbsCrumbProp, ListItemNavLink } from 'components';
@@ -15,9 +15,17 @@ export type EstimatesViewProps = {
 export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estimates }) => {
   const { id } = useParams<{ id: string }>();
 
+  if (!id) return null;
+
   const renderActions = (
     <>
-      <Button variant="outlined" color="primary" className="mr-2">
+      <Button
+        variant="outlined"
+        color="primary"
+        className="mr-2"
+        component={RouterLink}
+        to={generatePath(Routes.EstimatesEdit, { id })}
+      >
         Edit
       </Button>
       <Button variant="contained" color="primary" className="mr-2">
@@ -28,8 +36,6 @@ export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estim
       </Button>
     </>
   );
-
-  if (!id) return null;
 
   return (
     <Grid container spacing={0} className={styles.root}>

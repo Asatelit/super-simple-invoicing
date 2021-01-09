@@ -1,4 +1,4 @@
-import { Action, Estimate, Optional, ItemRecord } from '../types';
+import { Action, Estimate, Optional, LineItem } from '../types';
 import { getTimestamp, generateId } from '../utils';
 import { EstimateStatus } from '../enums';
 
@@ -8,11 +8,11 @@ type CommonOptionalEstimateProps =
   | 'discountPerItem'
   | 'discountType'
   | 'estimateTemplateId'
-  | 'items'
+  | 'lineItems'
   | 'notes'
   | 'referenceNumber'
   | 'status'
-  | 'taxes'
+  | 'lineTaxes'
   | 'taxPerItem';
 
 // prettier-ignore
@@ -23,16 +23,16 @@ export type EstimateActionsAddProps = Pick<
 
 // prettier-ignore
 export type EstimateActionsUpdateProps = Pick<
-  Optional<Estimate, CommonReqiredEstimateProps | CommonOptionalEstimateProps>,
+  Optional<Estimate, CommonOptionalEstimateProps>,
   'id' | CommonReqiredEstimateProps | CommonOptionalEstimateProps
 >;
 
 type ReqiredItemRecordProps = 'itemId' | 'price' | 'quantity' | 'unit';
-type OptionalItemRecordProps = 'description' | 'discountType' | 'discountValue' | 'taxes';
+type OptionalItemRecordProps = 'description' | 'discountType' | 'discountValue' | 'lineTaxes';
 
 // prettier-ignore
 export type EstimateActionsAddItemProps = Pick<
-  Optional<ItemRecord, OptionalItemRecordProps>,
+  Optional<LineItem, OptionalItemRecordProps>,
   ReqiredItemRecordProps | OptionalItemRecordProps
 >;
 
@@ -50,8 +50,8 @@ export type EstimatesActions = {
 export const createEstimatesActions: Action<EstimatesActions> = (state, updateState) => {
   // Update helper
   const updateEstimate = (data: Partial<Estimate>, estimate: Estimate): Estimate => {
-    const items = data.items ?? estimate.items;
-    const subTotal = items.reduce((a, b) => a + (b['price'] || 0), 0);
+    const items = data.lineItems ?? estimate.lineItems;
+    const subTotal = items.reduce((a, b) => a + b.total, 0);
 
     // Discount calculation
     const discountValue = data.discountAmount ?? estimate.discountAmount;
@@ -67,8 +67,8 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
     }
 
     // Taxes calculation
-    const taxes = data.taxes ?? estimate.taxes;
-    const taxAmounts = taxes.map((entity) => (subTotal / 100) * entity.percent);
+    const lineTaxes = data.lineTaxes ?? estimate.lineTaxes;
+    const taxAmounts = lineTaxes.map((entity) => (subTotal / 100) * entity.percent);
     const taxAmount = taxAmounts.reduce((a, b) => a + (b || 0), 0);
 
     const total = subTotal - discountAmount + taxAmount;
@@ -81,14 +81,14 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
       discountValue,
       subTotal,
       taxAmount,
-      taxes,
+      lineTaxes,
       total,
       customerId: data.customerId ?? estimate.customerId,
       estimateDate: data.estimateDate ?? estimate.estimateDate,
       estimateNumber: data.estimateNumber ?? estimate.estimateNumber,
       estimateTemplateId: data.estimateTemplateId ?? estimate.estimateTemplateId,
       expiryDate: data.expiryDate ?? estimate.expiryDate,
-      items: data.items ?? estimate.items,
+      lineItems: data.lineItems ?? estimate.lineItems,
       notes: data.notes ?? estimate.notes,
       referenceNumber: data.referenceNumber ?? estimate.referenceNumber,
       status: data.status ?? estimate.status,
@@ -102,19 +102,19 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
      */
     add: (data) => {
       const discountValue = data.discountValue ?? 0;
-      const items = data.items ?? [];
+      const items = data.lineItems ?? [];
       const subTotal = items.reduce((a, b) => a + (b['price'] || 0), 0);
-      const taxes = data.taxes ?? [];
+      const taxes = data.lineTaxes ?? [];
       const taxAmount = 0;
 
       const newEstimate = updateEstimate(
         {},
         {
-          discountValue,
-          items,
           subTotal,
           taxAmount,
-          taxes,
+          discountValue,
+          lineItems: items,
+          lineTaxes: taxes,
           createdAt: getTimestamp(),
           customerId: data.customerId,
           discountAmount: 0,
@@ -155,18 +155,18 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
       const discountValue = data.discountValue ?? 0;
       const discountAmount = discountType === 'fixed' ? discountValue : (amount * 100) / discountValue;
       // Taxes calculation
-      const taxes = data.taxes?.length
-        ? data.taxes.map((entity) => ({ ...entity, amount: (amount / 100) * entity.percent }))
+      const taxes = data.lineTaxes?.length
+        ? data.lineTaxes.map((entity) => ({ ...entity, amount: (amount / 100) * entity.percent }))
         : [];
       const taxAmount = taxes.reduce((a, b) => a + (b.amount || 0), 0);
 
-      const item: ItemRecord = {
+      const item: LineItem = {
         amount,
         discountAmount,
         discountType,
         discountValue,
         taxAmount,
-        taxes,
+        lineTaxes: taxes,
         description: data.description ?? '',
         itemId: data.itemId,
         price: data.price,
@@ -175,7 +175,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
         unit: data.unit,
       };
 
-      const updEstimate = updateEstimate({ items: [...estimate.items, item] }, estimate);
+      const updEstimate = updateEstimate({ lineItems: [...estimate.lineItems, item] }, estimate);
       const estimates = [...state.estimates.filter((item) => item.id !== estimateId), updEstimate];
       updateState({ estimates });
 

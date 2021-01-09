@@ -1,7 +1,9 @@
 import React, { Fragment, ReactElement, useContext, useEffect, useCallback, useMemo } from 'react';
 import { Switch as SwitchRoute, Route, Redirect, useHistory } from 'react-router-dom';
 import { eachMonthOfInterval, startOfYear, startOfMonth, endOfYear, endOfMonth, format } from 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
 import clsx from 'clsx';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import {
   AppBar,
   CssBaseline,
@@ -140,6 +142,8 @@ function App() {
     { path: Routes.ItemsCreate, name: 'New Item', c: <L.ItemsEditor actions={actions} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.EstimatesList, name: 'Estimates', c: <L.EstimatesList actions={actions} estimates={estimates} customers={customers} /> },
     { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} /> },
+    { path: Routes.EstimatesEdit, name: 'Edit Estimate', c: <L.EstimatesEditor actions={actions} estimates={mapped.estimates} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
+    { path: Routes.EstimatesCreate, name: 'New Estimate', c: <L.EstimatesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
     { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} /> },
     { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
@@ -176,75 +180,77 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={styles.root}>
-        <CssBaseline />
-        <SwitchRoute>
-          {dialogRoutes.map(({ c, path, name }) => (
-            <Route key={path} path={path}>
-              <Dialog open aria-labelledby={name} onClose={() => history.goBack()}>
-                {c}
-              </Dialog>
-            </Route>
-          ))}
-        </SwitchRoute>
-        <AppBar position="absolute" className={clsx(styles.appBar, open && styles.appBarShift)}>
-          <Toolbar className={styles.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              className={clsx(styles.menuButton, open && styles.menuButtonHidden)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <div className={styles.search}>
-              <div className={styles.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: styles.inputRoot,
-                  input: styles.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
-            <div className={styles.grow} />
-            <Switch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          open={open}
-          classes={{
-            paper: clsx(styles.drawerPaper, !open && styles.drawerPaperClose),
-          }}
-        >
-          <div className={styles.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          {navItems.map((group, index) => (
-            <Fragment key={`app-nav-group_${index}`}>
-              <List>{group}</List>
-              <Divider />
-            </Fragment>
-          ))}
-        </Drawer>
-        <main className={styles.content}>
-          <div className={styles.barSpacer} />
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <div className={styles.root}>
+          <CssBaseline />
           <SwitchRoute>
-            <Route exact path={Routes.Admin}>
-              <Redirect to={Routes.Dashboard} />
-            </Route>
-            {layoutRoutes.map(({ path, c, exact }, key) => renderRoute(key, path, c, exact))}
+            {dialogRoutes.map(({ c, path, name }) => (
+              <Route key={path} path={path}>
+                <Dialog open aria-labelledby={name} onClose={() => history.goBack()}>
+                  {c}
+                </Dialog>
+              </Route>
+            ))}
           </SwitchRoute>
-        </main>
-      </div>
+          <AppBar position="absolute" className={clsx(styles.appBar, open && styles.appBarShift)}>
+            <Toolbar className={styles.toolbar}>
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                className={clsx(styles.menuButton, open && styles.menuButtonHidden)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <div className={styles.search}>
+                <div className={styles.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search…"
+                  classes={{
+                    root: styles.inputRoot,
+                    input: styles.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </div>
+              <div className={styles.grow} />
+              <Switch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            open={open}
+            classes={{
+              paper: clsx(styles.drawerPaper, !open && styles.drawerPaperClose),
+            }}
+          >
+            <div className={styles.toolbarIcon}>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </div>
+            <Divider />
+            {navItems.map((group, index) => (
+              <Fragment key={`app-nav-group_${index}`}>
+                <List>{group}</List>
+                <Divider />
+              </Fragment>
+            ))}
+          </Drawer>
+          <main className={styles.content}>
+            <div className={styles.barSpacer} />
+            <SwitchRoute>
+              <Route exact path={Routes.Admin}>
+                <Redirect to={Routes.Dashboard} />
+              </Route>
+              {layoutRoutes.map(({ path, c, exact }, key) => renderRoute(key, path, c, exact))}
+            </SwitchRoute>
+          </main>
+        </div>
+      </MuiPickersUtilsProvider>
     </ThemeProvider>
   );
 }
