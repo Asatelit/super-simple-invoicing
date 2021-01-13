@@ -21,18 +21,18 @@ import {
 } from '@material-ui/core';
 import { AddBoxOutlined as AddIcon, DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { EstimateActionsAddProps, EstimateActionsUpdateProps } from 'actions';
+import { InvoiceActionsAddProps, InvoiceActionsUpdateProps } from 'actions';
 import { Form, FormDataProp, FormDataElementProp, BreadcrumbsCrumbProp } from 'components';
-import { AppActions, Estimate, Tax, Customer, LineItem, Item } from 'types';
+import { AppActions, Invoice, Tax, Customer, LineItem, Item } from 'types';
 import { Common } from 'layouts';
 import { Routes } from 'enums';
-import styles from './estimatesEditor.module.css';
+import styles from './invoicesEditor.module.css';
 
-export type EstimatesEditorProps = {
+export type InvoicesEditorProps = {
   actions: AppActions;
   breadcrumbs?: BreadcrumbsCrumbProp[];
   customers: Customer[];
-  estimates?: Estimate[];
+  invoices?: Invoice[];
   items: Item[];
   taxPerItem: boolean;
   taxes: Tax[];
@@ -53,64 +53,64 @@ const lineItemDraft: LineItem = {
   lineTaxes: [],
 };
 
-export const EstimatesEditor = ({
+export const InvoicesEditor = ({
   actions,
   breadcrumbs,
   customers,
-  estimates,
+  invoices,
   items,
   taxPerItem,
   taxes,
-}: EstimatesEditorProps) => {
+}: InvoicesEditorProps) => {
   const history = useHistory();
   const { id } = useParams<{ id?: string }>();
   const [lineItems, setLineItems] = useState<LineItem[]>([{ ...lineItemDraft }]);
-  const [data, setData] = useState<EstimateActionsAddProps & EstimateActionsUpdateProps>({
+  const [data, setData] = useState<InvoiceActionsAddProps & InvoiceActionsUpdateProps>({
     id: '',
-    estimateDate: new Date(),
-    expiryDate: addDays(new Date(), 7),
+    invoiceDate: new Date(),
+    dueDate: addDays(new Date(), 7),
     customerId: '',
-    estimateNumber: 'EST-000001',
+    invoiceNumber: 'EST-000001',
   });
 
   useEffect(() => {
-    if (!estimates) return;
+    if (!invoices) return;
     // Get data for editing
-    const estimate = estimates.find((element) => element.id === id);
-    if (estimate) {
-      setData(estimate);
-      setLineItems(estimate.lineItems);
+    const invoice = invoices.find((element) => element.id === id);
+    if (invoice) {
+      setData(invoice);
+      setLineItems(invoice.lineItems);
     } else {
       history.replace(Routes.Admin);
       toast.error('The requested resource was not found.');
     }
-  }, [estimates, history, id]);
+  }, [invoices, history, id]);
 
   // Data update helper
-  const updateData = (value: Partial<EstimateActionsAddProps | EstimateActionsUpdateProps>) =>
+  const updateData = (value: Partial<InvoiceActionsAddProps | InvoiceActionsUpdateProps>) =>
     setData({ ...data, ...value });
 
   const renderActions = (
-    <Button type="submit" variant="contained" color="primary" form="EditEstimateForm">
-      {estimates ? 'Update Estimate' : 'Save Estimate'}
+    <Button type="submit" variant="contained" color="primary" form="EditInvoiceForm">
+      {invoices ? 'Update Invoice' : 'Save Invoice'}
     </Button>
   );
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (id) {
-      const props: EstimateActionsUpdateProps = { ...data, lineItems };
-      actions.estimates.update(props);
+      const props: InvoiceActionsUpdateProps = { ...data, lineItems };
+      actions.invoices.update(props);
     } else {
-      const props: EstimateActionsAddProps = { ...data, lineItems };
-      actions.estimates.add(props);
+      const props: InvoiceActionsAddProps = { ...data, lineItems };
+      actions.invoices.add(props);
     }
     history.goBack();
   };
 
   const getCommonTextFieldProps = (id: string): TextFieldProps => ({
-    id: `EstimatesEditor${id}`,
-    name: `EstimatesEditor${id}`,
+    id: `InvoicesEditor${id}`,
+    name: `InvoicesEditor${id}`,
     size: 'small',
     variant: 'outlined',
   });
@@ -132,7 +132,7 @@ export const EstimatesEditor = ({
           gridProps: { ...gridProps, md: 6 },
           children: (
             <Autocomplete
-              id={`EstimatesEditorLineItem${key}`}
+              id={`InvoicesEditorLineItem${key}`}
               options={items}
               getOptionLabel={(option: Item) => option.name || ''}
               value={items.find((item) => item.id === lineItem.itemId) || null}
@@ -231,7 +231,7 @@ export const EstimatesEditor = ({
           gridProps: { ...gridProps, md: 12 },
           children: (
             <Autocomplete
-              id="EstimatesEditorCustomer"
+              id="InvoicesEditorCustomer"
               options={customers}
               getOptionLabel={(option: Customer) => option.name || ''}
               value={customers.find((customer) => data.customerId === customer.id) || null}
@@ -248,14 +248,14 @@ export const EstimatesEditor = ({
             <KeyboardDatePicker
               fullWidth
               required
-              id="EstimatesEditorEstimateDate"
-              name="EstimatesEditorEstimateDate"
+              id="InvoicesEditorInvoiceDate"
+              name="InvoicesEditorInvoiceDate"
               size="small"
               inputVariant="outlined"
-              label="Estimate Date"
+              label="Invoice Date"
               format="MM/dd/yyyy"
-              value={data.estimateDate ?? ''}
-              onChange={(date) => updateData({ estimateDate: date || undefined })}
+              value={data.invoiceDate ?? ''}
+              onChange={(date) => updateData({ invoiceDate: date || undefined })}
             />
           ),
         },
@@ -265,14 +265,14 @@ export const EstimatesEditor = ({
             <KeyboardDatePicker
               fullWidth
               required
-              id="EstimatesEditorDueDate"
-              name="EstimatesEditorDueDate"
+              id="InvoiceEditorDueDate"
+              name="InvoiceEditorDueDate"
               size="small"
               inputVariant="outlined"
               label="Due Date"
               format="MM/dd/yyyy"
-              value={data.expiryDate ?? ''}
-              onChange={(date) => updateData({ expiryDate: date || undefined })}
+              value={data.dueDate ?? ''}
+              onChange={(date) => updateData({ dueDate: date || undefined })}
             />
           ),
         },
@@ -280,12 +280,12 @@ export const EstimatesEditor = ({
           gridProps,
           children: (
             <TextField
-              {...getCommonTextFieldProps('EstimateNumber')}
+              {...getCommonTextFieldProps('InvoiceNumber')}
               fullWidth
               required
-              label="Estimate Number"
-              value={data.estimateNumber ?? ''}
-              onChange={(e) => updateData({ estimateNumber: e.target.value })}
+              label="Invoice Number"
+              value={data.invoiceNumber ?? ''}
+              onChange={(e) => updateData({ invoiceNumber: e.target.value })}
             />
           ),
         },
@@ -336,10 +336,10 @@ export const EstimatesEditor = ({
               <Grid item md={12}>
                 <Box textAlign="right">
                   <FormControl variant="outlined" size="small" className="mb-3" style={{ width: '180px' }}>
-                    <InputLabel htmlFor="EstimatesEditorDiscountValue">Discount</InputLabel>
+                    <InputLabel htmlFor="InvoicesEditorDiscountValue">Discount</InputLabel>
                     <OutlinedInput
-                      id="EstimatesEditorDiscountValue"
-                      name="EstimatesEditorDiscountValue"
+                      id="InvoicesEditorDiscountValue"
+                      name="InvoicesEditorDiscountValue"
                       value={data.discountValue || ''}
                       error={Math.sign(amount.total) === -1}
                       onChange={(e) => updateData({ discountValue: parseInt(e.target.value, 10) })}
@@ -380,11 +380,11 @@ export const EstimatesEditor = ({
   return (
     <Container maxWidth="lg">
       <Common
-        title={estimates ? 'Edit Estimate' : 'New Estimate'}
+        title={invoices ? 'Edit Invoice' : 'New Invoice'}
         breadcrumbs={breadcrumbs}
         actions={renderActions}
       >
-        <Form id="EditEstimateForm" data={formData} onSubmit={handleOnSubmit} className={styles.form} />
+        <Form id="EditInvoiceForm" data={formData} onSubmit={handleOnSubmit} className={styles.form} />
       </Common>
     </Container>
   );

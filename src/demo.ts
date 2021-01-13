@@ -50,10 +50,10 @@ const fake = {
 };
 
 // Generate phone numbers for use as test data
-function createPhoneNumber(arr: number[]) {
+function createPhoneNumber() {
+  const fakeNum = Array.from(String(getRandomInt(1000000000, 9999999999)), Number);
   let mask = '(xxx) xxx-xxxx';
-
-  arr.forEach((item) => {
+  fakeNum.forEach((item) => {
     mask = mask.replace('x', item.toString());
   });
 
@@ -92,6 +92,7 @@ export function generateDemoData(): AppState {
 
   const { state, setState } = getFakeState(initialState);
   const estimates = () => A.createEstimatesActions(state(), updateState);
+  const invoices = () => A.createInvoicesActions(state(), updateState);
 
   // State update helper
   const updateState = (value: Partial<AppState>) => {
@@ -104,7 +105,7 @@ export function generateDemoData(): AppState {
   const demoCustomers = fake.names.map((name) =>
     customers().add({
       name,
-      phone: createPhoneNumber(Array.from(String(getRandomInt(1000000000, 9999999999)), Number)),
+      phone: createPhoneNumber(),
     }),
   );
 
@@ -122,15 +123,16 @@ export function generateDemoData(): AppState {
 
   rangeDays.forEach((day) => {
     const itemsList = state().items;
+    const customersList = state().customers;
+    const estimatesList = state().estimates;
     const itemsCount = itemsList.length - 1;
-    const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
+    // Create fake estimates
     for (let i = 1; i < getRandomInt(1, 3); i += 1) {
-      // Generate Estimates
-      const customersList = state().customers;
-      const estimatesList = state().estimates;
+      // Selecting a random number of items
+      const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
-      const estimate = estimates().add({
+      const createdEstimate = estimates().add({
         customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
         estimateDate: day,
         estimateNumber: `EST-00000${estimatesList.length}`,
@@ -146,22 +148,37 @@ export function generateDemoData(): AppState {
             itemId: id,
             quantity: getRandomInt(1, 3),
           },
-          estimate.id,
+          createdEstimate.id,
+        );
+      });
+    }
+
+    // Create fake invoices
+    for (let i = 1; i < getRandomInt(1, 3); i += 1) {
+      // Selecting a random number of items
+      const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
+
+      const createdInvoice = invoices().add({
+        customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
+        invoiceDate: day,
+        invoiceNumber: `INV-00000${estimatesList.length}`,
+        dueDate: addDays(day, getRandomInt(0, 30)),
+      });
+
+      itemIds.forEach((itemId) => {
+        const { price, unit, id } = itemsList[itemId];
+        invoices().addItem(
+          {
+            price,
+            unit,
+            itemId: id,
+            quantity: getRandomInt(1, 3),
+          },
+          createdInvoice.id,
         );
       });
     }
   });
-
-  // Generate Invoices
-  const invoices = () => A.createInvoicesActions(state(), updateState);
-  demoCustomers.forEach((customer, index) =>
-    invoices().add({
-      invoiceDate: getTimestamp(),
-      dueDate: getTimestamp(),
-      customerId: customer.id,
-      invoiceNumber: `INV-00000${index}`,
-    }),
-  );
 
   // Generate Payments
   const payments = () => A.createPaymentsActions(state(), updateState);

@@ -8,6 +8,7 @@ export * from './estimatesEditor/estimatesEditor';
 export * from './estimatesList/estimatesList';
 export * from './estimatesView/estimatesView';
 export * from './expensesList/expensesList';
+export * from './invoicesEditor/invoicesEditor';
 export * from './invoicesList/invoicesList';
 export * from './invoicesView/invoicesView';
 export * from './itemsEditor/itemsEditor';

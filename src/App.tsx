@@ -145,6 +145,8 @@ function App() {
     { path: Routes.EstimatesEdit, name: 'Edit Estimate', c: <L.EstimatesEditor actions={actions} estimates={mapped.estimates} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.EstimatesCreate, name: 'New Estimate', c: <L.EstimatesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
+    { path: Routes.InvoicesEdit, name: 'Edit Invoice', c: <L.InvoicesEditor actions={actions} invoices={mapped.invoices} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
+    { path: Routes.InvoicesEdit, name: 'New Invoice', c: <L.InvoicesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} /> },
     { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },

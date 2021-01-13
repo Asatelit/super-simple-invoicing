@@ -45,6 +45,7 @@ export const AppContextProvider: React.FC = ({ children }) => {
           symbol: rehydratedState.settings.currencySymbol, // default currency symbol is '$'
           format: {
             pos: rehydratedState.settings.currencyFormat, // controls output: %s = symbol, %v = value/number
+            neg: `- ${rehydratedState.settings.currencyFormat}`, // controls output: %s = symbol, %v = value/number
             zero: rehydratedState.settings.currencyFormat, // controls output: %s = symbol, %v = value/number
           },
           decimal: '.', // decimal point separator
