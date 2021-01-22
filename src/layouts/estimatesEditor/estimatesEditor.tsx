@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import { AddBoxOutlined as AddIcon, DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { EstimateActionsAddProps, EstimateActionsUpdateProps } from 'actions';
+import { EstimateActionsUpdateProps } from 'actions';
 import { Form, FormDataProp, FormDataElementProp, BreadcrumbsCrumbProp } from 'components';
 import { AppActions, Estimate, Tax, Customer, LineItem, Item } from 'types';
 import { Common } from 'layouts';
@@ -64,14 +64,9 @@ export const EstimatesEditor = ({
 }: EstimatesEditorProps) => {
   const history = useHistory();
   const { id } = useParams<{ id?: string }>();
-  const [lineItems, setLineItems] = useState<LineItem[]>([{ ...lineItemDraft }]);
-  const [data, setData] = useState<EstimateActionsAddProps & EstimateActionsUpdateProps>({
-    id: '',
-    estimateDate: new Date(),
-    expiryDate: addDays(new Date(), 7),
-    customerId: '',
-    estimateNumber: 'EST-000001',
-  });
+  const [data, setData] = useState<Estimate>(
+    actions.estimates.calculate({ expiryDate: addDays(new Date(), 7), lineItems: [lineItemDraft] }),
+  );
 
   useEffect(() => {
     if (!estimates) return;
@@ -79,7 +74,6 @@ export const EstimatesEditor = ({
     const estimate = estimates.find((element) => element.id === id);
     if (estimate) {
       setData(estimate);
-      setLineItems(estimate.lineItems);
     } else {
       history.replace(Routes.Admin);
       toast.error('The requested resource was not found.');
@@ -87,8 +81,10 @@ export const EstimatesEditor = ({
   }, [estimates, history, id]);
 
   // Data update helper
-  const updateData = (value: Partial<EstimateActionsAddProps | EstimateActionsUpdateProps>) =>
-    setData({ ...data, ...value });
+  const updateData = (value: EstimateActionsUpdateProps) => {
+    const estimate = actions.estimates.calculate(value, data);
+    setData(estimate);
+  };
 
   const renderActions = (
     <Button type="submit" variant="contained" color="primary" form="EditEstimateForm">
@@ -98,13 +94,7 @@ export const EstimatesEditor = ({
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (id) {
-      const props: EstimateActionsUpdateProps = { ...data, lineItems };
-      actions.estimates.update(props);
-    } else {
-      const props: EstimateActionsAddProps = { ...data, lineItems };
-      actions.estimates.add(props);
-    }
+    actions.estimates.update(data);
     history.goBack();
   };
 
@@ -117,16 +107,14 @@ export const EstimatesEditor = ({
 
   const getLineItemsFormControls = () => {
     const result: FormDataElementProp[] = [];
-    const update = (data: Partial<LineItem>, key: number) => {
-      const updLineItems = [...lineItems];
-      updLineItems[key] = { ...updLineItems[key], ...data };
-      updLineItems[key].amount = updLineItems[key].quantity * updLineItems[key].price;
-      updLineItems[key].total =
-        updLineItems[key].amount + updLineItems[key].discountAmount + updLineItems[key].taxAmount;
-      setLineItems(updLineItems);
+
+    const update = (value: Partial<LineItem>, key: number) => {
+      const updLineItems = [...data.lineItems];
+      updLineItems[key] = { ...updLineItems[key], ...value };
+      updateData({ lineItems: updLineItems });
     };
 
-    lineItems.forEach((lineItem, key) => {
+    data.lineItems.forEach((lineItem, key) => {
       result.push(
         {
           gridProps: { ...gridProps, md: 6 },
@@ -152,7 +140,7 @@ export const EstimatesEditor = ({
               {...getCommonTextFieldProps(`LineItemQuantity${key}`)}
               fullWidth
               label="Quantity"
-              value={lineItem.quantity}
+              value={lineItem.quantity || 1}
               onChange={(e) => update({ quantity: parseInt(e.target.value, 10) }, key)}
             />
           ),
@@ -164,7 +152,7 @@ export const EstimatesEditor = ({
               {...getCommonTextFieldProps(`LineItemPrice${key}`)}
               fullWidth
               label="Price"
-              value={lineItem.price}
+              value={lineItem.price || 0}
               onChange={(e) => update({ price: parseInt(e.target.value, 10) }, key)}
             />
           ),
@@ -179,7 +167,7 @@ export const EstimatesEditor = ({
               <IconButton
                 size="small"
                 className="ml-2"
-                onClick={() => setLineItems(lineItems.filter((_, index) => key !== index))}
+                onClick={() => updateData({ lineItems: data.lineItems.filter((_, index) => key !== index) })}
               >
                 <DeleteIcon style={{ margin: '0.25rem' }} />
               </IconButton>
@@ -203,14 +191,14 @@ export const EstimatesEditor = ({
   };
 
   const addLineItem = () => {
-    const updLineItems = [...lineItems];
+    const updLineItems = [...data.lineItems];
     updLineItems.push(lineItemDraft);
-    setLineItems(updLineItems);
+    updateData({ lineItems: updLineItems });
   };
 
   const discountValue = data.discountValue || 0;
   const isPercentage = data.discountType === 'percentage';
-  const subtotal = useMemo(() => lineItems.reduce((a, b) => a + b.total, 0), [lineItems]);
+  const subtotal = useMemo(() => data.lineItems.reduce((a, b) => a + b.total, 0), [data.lineItems]);
   const discount = useMemo(() => (isPercentage ? (discountValue / 100) * subtotal : discountValue), [
     isPercentage,
     discountValue,

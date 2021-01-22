@@ -132,12 +132,15 @@ export function generateDemoData(): AppState {
       // Selecting a random number of items
       const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
-      const createdEstimate = estimates().add({
+      const estimate = estimates().calculate({
         customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
         estimateDate: day,
         estimateNumber: `EST-00000${estimatesList.length}`,
         expiryDate: addDays(day, getRandomInt(0, 30)),
       });
+
+      const createdEstimate = estimates().update(estimate);
+      if (!createdEstimate) return null;
 
       itemIds.forEach((itemId) => {
         const { price, unit, id } = itemsList[itemId];

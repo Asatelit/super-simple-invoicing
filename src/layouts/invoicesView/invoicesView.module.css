@@ -6,6 +6,7 @@
 .menu {
   height: 100%;
   overflow: auto;
+  border-right: 1px solid var(--divider);
 }
 
 .number {
@@ -19,4 +20,10 @@
   background-color: var(--background-paper);
   font-size: 0.75em;
   margin-top: 3px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

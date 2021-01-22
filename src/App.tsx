@@ -25,7 +25,7 @@ import { appContext } from './hooks';
 import { navItems } from './components';
 import { Routes } from './enums';
 import { flatten } from './utils';
-import { MappedInvoice, MappedCustomer, MappedEstimate, DateRange } from './types';
+import { MappedInvoice, MappedCustomer, MappedEstimate, DateRange, DataCollection, Item } from './types';
 import * as L from './layouts';
 import * as D from './dialogs';
 import styles from './app.module.css';
@@ -56,9 +56,10 @@ function App() {
     [isDarkMode],
   );
 
-  const getCustomersById = useCallback((id: string) => customers.find((customer) => customer.id === id), [
-    customers,
-  ]);
+  const getCustomersById = useCallback(
+    (id: string | null) => customers.find((customer) => customer.id === id),
+    [customers],
+  );
 
   const mapped: MappedData = {
     invoices: useMemo(
@@ -112,6 +113,15 @@ function App() {
     ),
   };
 
+  const itemsCollection: DataCollection<Item> = useMemo(
+    () =>
+      items.reduce((obj, item) => {
+        obj[item['id']] = item;
+        return obj;
+      }, {}),
+    [items],
+  );
+
   // Transpose Material UI palette to CSS variables.
   useEffect(() => {
     if (!root?.style) return;
@@ -141,13 +151,13 @@ function App() {
     { path: Routes.ItemsEdit, name: 'Edit Item', c: <L.ItemsEditor actions={actions} items={items} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.ItemsCreate, name: 'New Item', c: <L.ItemsEditor actions={actions} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.EstimatesList, name: 'Estimates', c: <L.EstimatesList actions={actions} estimates={estimates} customers={customers} /> },
-    { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} /> },
+    { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} items={itemsCollection} settings={settings} /> },
     { path: Routes.EstimatesEdit, name: 'Edit Estimate', c: <L.EstimatesEditor actions={actions} estimates={mapped.estimates} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.EstimatesCreate, name: 'New Estimate', c: <L.EstimatesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
     { path: Routes.InvoicesEdit, name: 'Edit Invoice', c: <L.InvoicesEditor actions={actions} invoices={mapped.invoices} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.InvoicesEdit, name: 'New Invoice', c: <L.InvoicesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
-    { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} /> },
+    { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} items={itemsCollection} settings={settings} /> },
     { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.Reports, name: 'Reports', c: <></> },

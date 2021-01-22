@@ -1,21 +1,24 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
-import { Grid, Button, Container, List, Paper } from '@material-ui/core';
+import React, { useMemo } from 'react';
+import { useParams, generatePath } from 'react-router-dom';
+import { formatMoney } from 'accounting';
+import { format } from 'date-fns';
+import { Grid, Button, Container, List, Typography } from '@material-ui/core';
 import { Common } from 'layouts';
-import { BreadcrumbsCrumbProp, ListItemNavLink } from 'components';
-import { MappedInvoice } from 'types';
+import { BreadcrumbsCrumbProp, ListItemNavLink, Invoice } from 'components';
+import { DataCollection, MappedInvoice, Settings, Item } from 'types';
 import { Routes, InvoiceStatus } from 'enums';
 import styles from './invoicesView.module.css';
 
 export type InvoicesViewProps = {
   breadcrumbs?: BreadcrumbsCrumbProp[];
   invoices: MappedInvoice[];
+  settings: Settings;
+  items: DataCollection<Item>;
 };
 
-export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoices }) => {
+export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoices, settings, items }) => {
   const { id } = useParams<{ id: string }>();
-
 
   const renderActions = (
     <>
@@ -35,7 +38,9 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
       yellowgreen: value === InvoiceStatus.DRAFT,
     });
 
-  if (!id) return null;
+  const invoice = useMemo(() => invoices.find((element) => element.id === id), [invoices, id]);
+
+  if (!invoice) return null;
 
   return (
     <Grid container spacing={0} className={styles.root}>
@@ -43,16 +48,32 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
         <List component="nav" dense disablePadding>
           {invoices.map((invoice) => (
             <ListItemNavLink
+              divider
               key={`Invoice${invoice.id}`}
-              to={Routes.InvoicesView.replace(':id', invoice.id)}
+              to={generatePath(Routes.InvoicesView.replace(':id', invoice.id))}
+              contentClassName={styles.navLink}
               selected={id === invoice.id}
-              primary={invoice.customer?.name || 'Unknown'}
-              secondary={
+              primary={
                 <>
-                  <span className={styles.number}>{invoice.invoiceNumber}</span>
+                  <Typography variant="body2" display="block" noWrap>
+                    {invoice.customer?.name || 'Customer'}
+                  </Typography>
+                  <Typography variant="body2" display="block" color="textSecondary" noWrap>
+                    {invoice.invoiceNumber}
+                  </Typography>
                   <span className={styles.chip} style={{ background: getColor(invoice.status) }}>
                     {invoice.status}
                   </span>
+                </>
+              }
+              secondary={
+                <>
+                  <Typography variant="h6" display="block" align="right" noWrap>
+                    {formatMoney(invoice.total)}
+                  </Typography>
+                  <Typography variant="body2" display="block" align="right" color="textSecondary" noWrap>
+                    {format(invoice.dueDate, 'MM/dd/yyyy')}
+                  </Typography>
                 </>
               }
             />
@@ -62,17 +83,7 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
       <Grid item sm={12} md={9}>
         <Container>
           <Common title="Invoice" actions={renderActions} />
-          <Paper
-            variant="elevation"
-            style={{
-              height: 'calc(100vh - 200px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            Invoice Preview
-          </Paper>
+          <Invoice invoice={invoice} items={items} settings={settings} />
         </Container>
       </Grid>
     </Grid>

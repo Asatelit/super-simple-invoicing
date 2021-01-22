@@ -26,3 +26,5 @@ export type View<S> = (state: AppState) => S;
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 
 export type DateRange = { start: Date; end: Date };
+
+export type DataCollection<T> = { [key: string]: T };
