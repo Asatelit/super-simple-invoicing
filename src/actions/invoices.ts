@@ -2,34 +2,6 @@ import { Action, Invoice, Optional, LineItem } from 'types';
 import { getTimestamp, generateId } from 'utils';
 import { InvoicePaidStatus, InvoiceStatus } from 'enums';
 
-type CommonOptionalInvoiceProps =
-  | 'invoiceTemplateId'
-  | 'lineItems'
-  | 'lineTaxes'
-  | 'notes'
-  | 'referenceNumber'
-  | 'status'
-  | 'sent'
-  | 'paidStatus'
-  | 'discountAmount'
-  | 'discountValue'
-  | 'discountPerItem'
-  | 'discountType';
-
-type CommonRequiredInvoiceProps = 'customerId' | 'invoiceDate' | 'invoiceNumber' | 'dueDate';
-
-// prettier-ignore
-export type InvoiceActionsAddProps = Pick<
-  Optional<Invoice, CommonOptionalInvoiceProps>,
-  CommonRequiredInvoiceProps | CommonOptionalInvoiceProps
->;
-
-// prettier-ignore
-export type InvoiceActionsUpdateProps = Pick<
-  Optional<Invoice, 'customerId' | 'dueDate' | CommonOptionalInvoiceProps>,
-  'id' | CommonRequiredInvoiceProps | CommonOptionalInvoiceProps
->;
-
 type ReqiredItemRecordProps = 'itemId' | 'price' | 'quantity' | 'unit';
 type OptionalItemRecordProps = 'description' | 'discountType' | 'discountValue' | 'lineTaxes';
 
@@ -39,33 +11,86 @@ export type InvoiceActionsAddItemProps = Pick<
   ReqiredItemRecordProps | OptionalItemRecordProps
 >;
 
+export type InvoiceActionsCalculateCommonProps =
+  | 'id'
+  | 'customerId'
+  | 'discountType'
+  | 'discountValue'
+  | 'discountPerItem'
+  | 'invoiceDate'
+  | 'invoiceNumber'
+  | 'invoiceTemplate'
+  | 'dueDate'
+  | 'lineItems'
+  | 'notes'
+  | 'referenceNumber'
+  | 'lineTaxes'
+  | 'status'
+  | 'taxPerItem';
+
+export type InvoiceActionsCalculateProps = Pick<
+  Optional<Invoice, InvoiceActionsCalculateCommonProps>,
+  InvoiceActionsCalculateCommonProps
+>;
+
 export type InvoicesActions = {
-  add: (data: InvoiceActionsAddProps) => Invoice;
   addItem: (data: InvoiceActionsAddItemProps, estimateId: string) => Invoice | null;
-  update: (data: InvoiceActionsUpdateProps) => Invoice | null;
+  calculate: (data?: InvoiceActionsCalculateProps, estimate?: Invoice) => Invoice;
+  update: (data: Invoice) => Invoice | null;
   remove: (ids: string[]) => Invoice[] | null;
   undoRemove: (ids: string[]) => Invoice[] | null;
   markSent: (ids: string[]) => Invoice[] | null;
 };
 
 export const createInvoicesActions: Action<InvoicesActions> = (state, updateState) => {
-  // Update helper
-  const updateInvoice = (data: Partial<Invoice>, invoice: Invoice): Invoice => {
-    const items = data.lineItems ?? invoice.lineItems;
-    const subTotal = items.reduce((a, b) => a + b.total, 0);
+  const getNewInvoice = (): Invoice => ({
+    createdAt: getTimestamp(),
+    customerId: null,
+    discountAmount: 0,
+    discountPerItem: 'no',
+    discountType: 'fixed',
+    discountValue: 0,
+    invoiceDate: getTimestamp(),
+    invoiceNumber: `${state.settings.invoicePrefix}-${1001 + state.invoices.length}`,
+    invoiceTemplate: null,
+    dueDate: null,
+    id: '',
+    isDeleted: false,
+    lineItems: [],
+    lineTaxes: [],
+    notes: null,
+    referenceNumber: null,
+    status: InvoiceStatus.DRAFT,
+    subTotal: 0,
+    taxAmount: 0,
+    taxPerItem: state.settings.taxPerItem,
+    total: 0,
+    updatedAt: getTimestamp(),
+    paidStatus: InvoicePaidStatus.UNPAID,
+    sent: null,
+  });
 
-    // Discount calculation
-    const discountValue = data.discountAmount ?? invoice.discountAmount;
+  // Calculate helper
+  const calculateInvoice = (data: Partial<Invoice> = {}, invoice: Invoice): Invoice => {
     const discountPerItem = data.discountPerItem ?? invoice.discountPerItem;
+    const discountValue = data.discountValue ?? invoice.discountValue;
     const discountType = data.discountType ?? invoice.discountType;
 
-    let discountAmount = 0;
+    // LineItems calculation
+    let lineItems = data.lineItems ?? invoice.lineItems;
+    lineItems = lineItems.map((item) => {
+      const amount = item.price * item.quantity;
+      return {
+        ...item,
+        amount,
+        total: amount - item.discountAmount + item.taxAmount,
+      };
+    });
 
-    if (discountPerItem) {
-      discountAmount = items.reduce((a, b) => a + (b['discountAmount'] || 0), 0);
-    } else {
-      discountAmount = discountType === 'fixed' ? discountValue : (subTotal * 100) / discountValue;
-    }
+    // Discount calculation
+    const isDiscountInPercentage = discountType === 'percentage';
+    const subTotal = lineItems.reduce((a, b) => a + b.total, 0);
+    const discountAmount = isDiscountInPercentage ? (discountValue / 100) * subTotal : discountValue;
 
     // Taxes calculation
     const lineTaxes = data.lineTaxes ?? invoice.lineTaxes;
@@ -80,16 +105,16 @@ export const createInvoicesActions: Action<InvoicesActions> = (state, updateStat
       discountPerItem,
       discountType,
       discountValue,
+      lineItems,
+      lineTaxes,
       subTotal,
       taxAmount,
-      lineTaxes,
       total,
       customerId: data.customerId ?? invoice.customerId,
       invoiceDate: data.invoiceDate ?? invoice.invoiceDate,
       invoiceNumber: data.invoiceNumber ?? invoice.invoiceNumber,
-      invoiceTemplateId: data.invoiceTemplateId ?? invoice.invoiceTemplateId,
+      invoiceTemplate: data.invoiceTemplate ?? invoice.invoiceTemplate,
       dueDate: data.dueDate ?? invoice.dueDate,
-      lineItems: data.lineItems ?? invoice.lineItems,
       notes: data.notes ?? invoice.notes,
       referenceNumber: data.referenceNumber ?? invoice.referenceNumber,
       status: data.status ?? invoice.status,
@@ -98,52 +123,6 @@ export const createInvoicesActions: Action<InvoicesActions> = (state, updateStat
   };
 
   return {
-    /**
-     * Creates an invoice.
-     */
-    add: (data) => {
-      const discountValue = data.discountValue ?? 0;
-      const items = data.lineItems ?? [];
-      const subTotal = items.reduce((a, b) => a + (b['price'] || 0), 0);
-      const taxes = data.lineTaxes ?? [];
-      const taxAmount = 0;
-
-      const newInvoice = updateInvoice(
-        {},
-        {
-          subTotal,
-          taxAmount,
-          discountValue,
-          lineItems: items,
-          lineTaxes: taxes,
-          createdAt: getTimestamp(),
-          dueDate: data.dueDate,
-          id: generateId(),
-          invoiceDate: data.invoiceDate,
-          invoiceNumber: data.invoiceNumber,
-          discountAmount: 0,
-          discountPerItem: data.discountPerItem ?? 'no',
-          discountType: data.discountType ?? 'fixed',
-          // invoiceTemplate: string | null; // { id: 1; name: 'Template 1'; view: 'invoice1' };
-          invoiceTemplateId: data.invoiceTemplateId || null,
-          notes: data.notes || null,
-          paidStatus: data.paidStatus || InvoicePaidStatus.UNPAID,
-          referenceNumber: data.referenceNumber || null,
-          sent: data.sent || null,
-          status: data.status || InvoiceStatus.DRAFT,
-          total: 0, // TODO
-          updatedAt: getTimestamp(),
-          customerId: data.customerId,
-          isDeleted: false,
-        },
-      );
-
-      const invoices = [...state.invoices, newInvoice];
-      updateState({ invoices });
-
-      return newInvoice;
-    },
-
     /**
      * Add item to invoice.
      */
@@ -178,7 +157,7 @@ export const createInvoicesActions: Action<InvoicesActions> = (state, updateStat
         unit: data.unit,
       };
 
-      const updInvoice = updateInvoice({ lineItems: [...invoice.lineItems, item] }, invoice);
+      const updInvoice = calculateInvoice({ lineItems: [...invoice.lineItems, item] }, invoice);
       const invoices = [...state.invoices.filter((item) => item.id !== invoiceId), updInvoice];
       updateState({ invoices });
 
@@ -189,13 +168,13 @@ export const createInvoicesActions: Action<InvoicesActions> = (state, updateStat
      * Updates an invoice.
      */
     update: (data) => {
-      const invoice = state.invoices.find((invoice) => data.id === invoice.id);
-      if (!invoice) return null;
-      const updInvoice = updateInvoice(data, invoice);
-      const invoices = [...state.invoices.filter((invoice) => data.id !== invoice.id), updInvoice];
+      const updInvoice = data.id ? data : { ...data, id: generateId() };
+      const invoices = [...state.invoices.filter((item) => item.id !== updInvoice.id), updInvoice];
       updateState({ invoices });
       return updInvoice;
     },
+
+    calculate: (data, invoice = getNewInvoice()) => calculateInvoice(data, invoice),
 
     /**
      * Deletes an invoice.

@@ -98,7 +98,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({ actions, breadcrumbs
 
   const renderers = {
     commonActions: (
-      <Button variant="contained" color="primary" component={RouterLink} to={Routes.EstimatesCreate}>
+      <Button variant="contained" color="primary" component={RouterLink} to={Routes.InvoicesCreate}>
         New Item
       </Button>
     ),

@@ -124,7 +124,6 @@ export function generateDemoData(): AppState {
   rangeDays.forEach((day) => {
     const itemsList = state().items;
     const customersList = state().customers;
-    const estimatesList = state().estimates;
     const itemsCount = itemsList.length - 1;
 
     // Create fake estimates
@@ -135,7 +134,6 @@ export function generateDemoData(): AppState {
       const estimate = estimates().calculate({
         customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
         estimateDate: day,
-        estimateNumber: `EST-00000${estimatesList.length}`,
         expiryDate: addDays(day, getRandomInt(0, 30)),
       });
 
@@ -161,12 +159,14 @@ export function generateDemoData(): AppState {
       // Selecting a random number of items
       const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
-      const createdInvoice = invoices().add({
+      const invoice = invoices().calculate({
         customerId: customersList[getRandomInt(0, customersList.length - 1)].id,
         invoiceDate: day,
-        invoiceNumber: `INV-00000${estimatesList.length}`,
         dueDate: addDays(day, getRandomInt(0, 30)),
       });
+
+      const createdInvoice = invoices().update(invoice);
+      if (!createdInvoice) return null;
 
       itemIds.forEach((itemId) => {
         const { price, unit, id } = itemsList[itemId];

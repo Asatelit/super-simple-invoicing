@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { addDays } from 'date-fns';
 import { formatMoney, settings } from 'accounting';
 import { toast } from 'react-toastify';
@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import { AddBoxOutlined as AddIcon, DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { EstimateActionsUpdateProps } from 'actions';
+import { EstimateActionsCalculateProps } from 'actions';
 import { Form, FormDataProp, FormDataElementProp, BreadcrumbsCrumbProp } from 'components';
 import { AppActions, Estimate, Tax, Customer, LineItem, Item } from 'types';
 import { Common } from 'layouts';
@@ -81,7 +81,7 @@ export const EstimatesEditor = ({
   }, [estimates, history, id]);
 
   // Data update helper
-  const updateData = (value: EstimateActionsUpdateProps) => {
+  const updateData = (value: EstimateActionsCalculateProps) => {
     const estimate = actions.estimates.calculate(value, data);
     setData(estimate);
   };
@@ -196,20 +196,6 @@ export const EstimatesEditor = ({
     updateData({ lineItems: updLineItems });
   };
 
-  const discountValue = data.discountValue || 0;
-  const isPercentage = data.discountType === 'percentage';
-  const subtotal = useMemo(() => data.lineItems.reduce((a, b) => a + b.total, 0), [data.lineItems]);
-  const discount = useMemo(() => (isPercentage ? (discountValue / 100) * subtotal : discountValue), [
-    isPercentage,
-    discountValue,
-    subtotal,
-  ]);
-  const amount = {
-    subtotal,
-    discount,
-    total: subtotal - discount,
-  };
-
   const gridProps: GridProps = { item: true, sm: 12, md: 6 };
 
   const formData: FormDataProp[] = [
@@ -318,7 +304,7 @@ export const EstimatesEditor = ({
               <Grid item md={12}>
                 <Typography align="right" className="mr-4 mb-3">
                   <span className="mr-4">Subtotal:</span>
-                  {formatMoney(amount.subtotal)}
+                  {formatMoney(data.subTotal)}
                 </Typography>
               </Grid>
               <Grid item md={12}>
@@ -329,7 +315,7 @@ export const EstimatesEditor = ({
                       id="EstimatesEditorDiscountValue"
                       name="EstimatesEditorDiscountValue"
                       value={data.discountValue || ''}
-                      error={Math.sign(amount.total) === -1}
+                      error={Math.sign(data.total) === -1}
                       onChange={(e) => updateData({ discountValue: parseInt(e.target.value, 10) })}
                       endAdornment={
                         <InputAdornment position="end">
@@ -355,7 +341,7 @@ export const EstimatesEditor = ({
               <Grid item md={12}>
                 <Typography align="right" className="mr-4">
                   <span className="mr-4">Total (UAH):</span>
-                  {formatMoney(amount.total)}
+                  {formatMoney(data.total)}
                 </Typography>
               </Grid>
             </Grid>

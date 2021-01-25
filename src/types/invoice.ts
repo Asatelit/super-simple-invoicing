@@ -3,16 +3,17 @@ import { InvoiceStatus, InvoicePaidStatus } from 'enums';
 
 export type Invoice = {
   createdAt: Date;
+  customerId: string | null;
   discountAmount: number;
-  discountValue: number;
   discountPerItem: 'no' | 'yes';
   discountType: 'fixed' | 'percentage';
-  dueDate: Date;
+  discountValue: number;
+  dueDate: Date | null;
   id: string;
   invoiceDate: Date;
   invoiceNumber: string;
-  // invoiceTemplate: string | null; // { id: 1; name: 'Template 1'; view: 'invoice1' };
-  invoiceTemplateId: string | null;
+  invoiceTemplate: string | null;
+  isDeleted: boolean;
   lineItems: LineItem[];
   lineTaxes: TaxRecord[];
   notes: null | string;
@@ -22,10 +23,9 @@ export type Invoice = {
   status: InvoiceStatus;
   subTotal: number;
   taxAmount: number;
+  taxPerItem: boolean;
   total: number;
   updatedAt: Date;
-  customerId: string;
-  isDeleted: boolean;
 };
 
 export type MappedInvoice = Invoice & {

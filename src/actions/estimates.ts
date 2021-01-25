@@ -11,25 +11,7 @@ export type EstimateActionsAddItemProps = Pick<
   ReqiredItemRecordProps | OptionalItemRecordProps
 >;
 
-export type EstimateActionsUpdateProps = Pick<
-  Optional<
-    Estimate,
-    | 'id'
-    | 'customerId'
-    | 'discountType'
-    | 'discountValue'
-    | 'discountPerItem'
-    | 'estimateDate'
-    | 'estimateNumber'
-    | 'estimateTemplateId'
-    | 'expiryDate'
-    | 'lineItems'
-    | 'notes'
-    | 'referenceNumber'
-    | 'lineTaxes'
-    | 'status'
-    | 'taxPerItem'
-  >,
+type EstimateActionsUpdateCommonProps =
   | 'id'
   | 'customerId'
   | 'discountType'
@@ -44,12 +26,16 @@ export type EstimateActionsUpdateProps = Pick<
   | 'referenceNumber'
   | 'lineTaxes'
   | 'status'
-  | 'taxPerItem'
+  | 'taxPerItem';
+
+export type EstimateActionsCalculateProps = Pick<
+  Optional<Estimate, EstimateActionsUpdateCommonProps>,
+  EstimateActionsUpdateCommonProps
 >;
 
 export type EstimatesActions = {
   addItem: (data: EstimateActionsAddItemProps, estimateId: string) => Estimate | null;
-  calculate: (data?: EstimateActionsUpdateProps, estimate?: Estimate) => Estimate;
+  calculate: (data?: EstimateActionsCalculateProps, estimate?: Estimate) => Estimate;
   update: (data: Estimate) => Estimate | null;
   remove: (ids: string[]) => Estimate[] | null;
   undoRemove: (ids: string[]) => Estimate[] | null;
@@ -67,7 +53,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
     discountType: 'fixed',
     discountValue: 0,
     estimateDate: getTimestamp(),
-    estimateNumber: `${state.settings.estimatePrefix}${1001 + state.estimates.length}`,
+    estimateNumber: `${state.settings.estimatePrefix}-${1001 + state.estimates.length}`,
     estimateTemplateId: null,
     expiryDate: null,
     id: '',

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { addDays } from 'date-fns';
 import { formatMoney, settings } from 'accounting';
 import { toast } from 'react-toastify';
@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import { AddBoxOutlined as AddIcon, DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { InvoiceActionsAddProps, InvoiceActionsUpdateProps } from 'actions';
+import { InvoiceActionsCalculateProps } from 'actions';
 import { Form, FormDataProp, FormDataElementProp, BreadcrumbsCrumbProp } from 'components';
 import { AppActions, Invoice, Tax, Customer, LineItem, Item } from 'types';
 import { Common } from 'layouts';
@@ -64,14 +64,9 @@ export const InvoicesEditor = ({
 }: InvoicesEditorProps) => {
   const history = useHistory();
   const { id } = useParams<{ id?: string }>();
-  const [lineItems, setLineItems] = useState<LineItem[]>([{ ...lineItemDraft }]);
-  const [data, setData] = useState<InvoiceActionsAddProps & InvoiceActionsUpdateProps>({
-    id: '',
-    invoiceDate: new Date(),
-    dueDate: addDays(new Date(), 7),
-    customerId: '',
-    invoiceNumber: 'EST-000001',
-  });
+  const [data, setData] = useState<Invoice>(
+    actions.invoices.calculate({ dueDate: addDays(new Date(), 7), lineItems: [lineItemDraft] }),
+  );
 
   useEffect(() => {
     if (!invoices) return;
@@ -79,7 +74,6 @@ export const InvoicesEditor = ({
     const invoice = invoices.find((element) => element.id === id);
     if (invoice) {
       setData(invoice);
-      setLineItems(invoice.lineItems);
     } else {
       history.replace(Routes.Admin);
       toast.error('The requested resource was not found.');
@@ -87,8 +81,10 @@ export const InvoicesEditor = ({
   }, [invoices, history, id]);
 
   // Data update helper
-  const updateData = (value: Partial<InvoiceActionsAddProps | InvoiceActionsUpdateProps>) =>
-    setData({ ...data, ...value });
+  const updateData = (value: InvoiceActionsCalculateProps) => {
+    const estimate = actions.invoices.calculate(value, data);
+    setData(estimate);
+  };
 
   const renderActions = (
     <Button type="submit" variant="contained" color="primary" form="EditInvoiceForm">
@@ -98,13 +94,7 @@ export const InvoicesEditor = ({
 
   const handleOnSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (id) {
-      const props: InvoiceActionsUpdateProps = { ...data, lineItems };
-      actions.invoices.update(props);
-    } else {
-      const props: InvoiceActionsAddProps = { ...data, lineItems };
-      actions.invoices.add(props);
-    }
+    actions.invoices.update(data);
     history.goBack();
   };
 
@@ -117,16 +107,14 @@ export const InvoicesEditor = ({
 
   const getLineItemsFormControls = () => {
     const result: FormDataElementProp[] = [];
-    const update = (data: Partial<LineItem>, key: number) => {
-      const updLineItems = [...lineItems];
-      updLineItems[key] = { ...updLineItems[key], ...data };
-      updLineItems[key].amount = updLineItems[key].quantity * updLineItems[key].price;
-      updLineItems[key].total =
-        updLineItems[key].amount + updLineItems[key].discountAmount + updLineItems[key].taxAmount;
-      setLineItems(updLineItems);
+
+    const update = (value: Partial<LineItem>, key: number) => {
+      const updLineItems = [...data.lineItems];
+      updLineItems[key] = { ...updLineItems[key], ...value };
+      updateData({ lineItems: updLineItems });
     };
 
-    lineItems.forEach((lineItem, key) => {
+    data.lineItems.forEach((lineItem, key) => {
       result.push(
         {
           gridProps: { ...gridProps, md: 6 },
@@ -179,7 +167,7 @@ export const InvoicesEditor = ({
               <IconButton
                 size="small"
                 className="ml-2"
-                onClick={() => setLineItems(lineItems.filter((_, index) => key !== index))}
+                onClick={() => updateData({ lineItems: data.lineItems.filter((_, index) => key !== index) })}
               >
                 <DeleteIcon style={{ margin: '0.25rem' }} />
               </IconButton>
@@ -203,23 +191,9 @@ export const InvoicesEditor = ({
   };
 
   const addLineItem = () => {
-    const updLineItems = [...lineItems];
+    const updLineItems = [...data.lineItems];
     updLineItems.push(lineItemDraft);
-    setLineItems(updLineItems);
-  };
-
-  const discountValue = data.discountValue || 0;
-  const isPercentage = data.discountType === 'percentage';
-  const subtotal = useMemo(() => lineItems.reduce((a, b) => a + b.total, 0), [lineItems]);
-  const discount = useMemo(() => (isPercentage ? (discountValue / 100) * subtotal : discountValue), [
-    isPercentage,
-    discountValue,
-    subtotal,
-  ]);
-  const amount = {
-    subtotal,
-    discount,
-    total: subtotal - discount,
+    updateData({ lineItems: updLineItems });
   };
 
   const gridProps: GridProps = { item: true, sm: 12, md: 6 };
@@ -330,7 +304,7 @@ export const InvoicesEditor = ({
               <Grid item md={12}>
                 <Typography align="right" className="mr-4 mb-3">
                   <span className="mr-4">Subtotal:</span>
-                  {formatMoney(amount.subtotal)}
+                  {formatMoney(data.subTotal)}
                 </Typography>
               </Grid>
               <Grid item md={12}>
@@ -341,7 +315,7 @@ export const InvoicesEditor = ({
                       id="InvoicesEditorDiscountValue"
                       name="InvoicesEditorDiscountValue"
                       value={data.discountValue || ''}
-                      error={Math.sign(amount.total) === -1}
+                      error={Math.sign(data.total) === -1}
                       onChange={(e) => updateData({ discountValue: parseInt(e.target.value, 10) })}
                       endAdornment={
                         <InputAdornment position="end">
@@ -367,7 +341,7 @@ export const InvoicesEditor = ({
               <Grid item md={12}>
                 <Typography align="right" className="mr-4">
                   <span className="mr-4">Total (UAH):</span>
-                  {formatMoney(amount.total)}
+                  {formatMoney(data.total)}
                 </Typography>
               </Grid>
             </Grid>

@@ -68,12 +68,27 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
               }
               secondary={
                 <>
-                  <Typography variant="h6" display="block" align="right" noWrap>
+                  <Typography
+                    variant="h6"
+                    variantMapping={{ h6: 'span' }}
+                    display="block"
+                    align="right"
+                    noWrap
+                  >
                     {formatMoney(invoice.total)}
                   </Typography>
-                  <Typography variant="body2" display="block" align="right" color="textSecondary" noWrap>
-                    {format(invoice.dueDate, 'MM/dd/yyyy')}
-                  </Typography>
+                  {invoice.dueDate && (
+                    <Typography
+                      variant="body2"
+                      variantMapping={{ body2: 'span' }}
+                      display="block"
+                      align="right"
+                      color="textSecondary"
+                      noWrap
+                    >
+                      {format(invoice.dueDate, 'MM/dd/yyyy')}
+                    </Typography>
+                  )}
                 </>
               }
             />

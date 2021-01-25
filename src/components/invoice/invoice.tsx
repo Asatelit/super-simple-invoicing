@@ -95,9 +95,11 @@ export const Invoice = ({ invoice, items, settings }: InvoiceProps) => {
             <Typography variant="body2" display="block" align="right" gutterBottom>
               Invoice Date: <span className="ml-3">{format(invoice.invoiceDate, 'MM/dd/yyyy')}</span>
             </Typography>
-            <Typography variant="body2" display="block" align="right" gutterBottom>
-              Payment Due: <span className="ml-3">{format(invoice.dueDate, 'MM/dd/yyyy')}</span>
-            </Typography>
+            {invoice.dueDate && (
+              <Typography variant="body2" display="block" align="right" gutterBottom>
+                Payment Due: <span className="ml-3">{format(invoice.dueDate, 'MM/dd/yyyy')}</span>
+              </Typography>
+            )}
           </>
         </Grid>
         <Grid item xs={12}>
@@ -114,7 +116,7 @@ export const Invoice = ({ invoice, items, settings }: InvoiceProps) => {
               </TableHead>
               <TableBody>
                 {invoice.lineItems.map((row, index) => (
-                  <TableRow key={row.itemId}>
+                  <TableRow key={`${row.itemId}_${index}`}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell component="th" scope="row">
                       {items[row.itemId].name}

@@ -77,11 +77,24 @@ export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estim
               }
               secondary={
                 <>
-                  <Typography variant="h6" display="block" align="right" noWrap>
+                  <Typography
+                    variant="h6"
+                    variantMapping={{ h6: 'span' }}
+                    display="block"
+                    align="right"
+                    noWrap
+                  >
                     {formatMoney(estimate.total)}
                   </Typography>
                   {estimate.expiryDate && (
-                    <Typography variant="body2" display="block" align="right" color="textSecondary" noWrap>
+                    <Typography
+                      variant="body2"
+                      variantMapping={{ body2: 'span' }}
+                      display="block"
+                      align="right"
+                      color="textSecondary"
+                      noWrap
+                    >
                       {format(estimate.expiryDate, 'MM/dd/yyyy')}
                     </Typography>
                   )}

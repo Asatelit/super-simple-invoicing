@@ -119,7 +119,7 @@ export const Estimate = ({ estimate, settings, items }: EstimateProps) => {
               </TableHead>
               <TableBody>
                 {estimate.lineItems.map((row, index) => (
-                  <TableRow key={row.itemId}>
+                  <TableRow key={`${row.itemId}_${index}`}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell component="th" scope="row">
                       {items[row.itemId].name}
