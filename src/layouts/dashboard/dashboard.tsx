@@ -324,6 +324,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
 
   const max = getDivisibleBy(summary.overall.sales, 10);
 
+  const tooltipContent = `
+    <div>Sales: <b>{sales:c2}</b></div>
+    <div>Receipts: <b>{receipts:c2}</b></div>
+    <div>Expenses: <b>{expenses:c2}</b></div>
+    <div>Net Income: <b>{netIncome:c2}</b></div>
+  `;
+
   return (
     <div className={styles.root}>
       {renderMenu(estimateMenuAnchorElement, estimatesGridMenu)}
@@ -336,7 +343,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                 <CardContent>
                   <Box display="flex" alignItems="center" flexDirection="row">
                     <Box flex="1 1 auto">
-                      <Typography variant="h5" component="h2" noWrap>
+                      <Typography variant="h4" component="h2" noWrap>
                         {formatMoney(amountDue)}
                       </Typography>
                       <Typography color="textSecondary">Amount Due</Typography>
@@ -363,7 +370,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                 <CardContent>
                   <Box display="flex" alignItems="center" flexDirection="row">
                     <Box flex="1 1 auto">
-                      <Typography variant="h5" component="h2" noWrap>
+                      <Typography variant="h4" component="h2" noWrap>
                         {customers.length}
                       </Typography>
                       <Typography color="textSecondary">Customers</Typography>
@@ -390,7 +397,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                 <CardContent>
                   <Box display="flex" alignItems="center" flexDirection="row">
                     <Box flex="1 1 auto">
-                      <Typography variant="h5" component="h2" noWrap>
+                      <Typography variant="h4" component="h2" noWrap>
                         {invoices.length}
                       </Typography>
                       <Typography color="textSecondary">Invoices</Typography>
@@ -417,7 +424,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                 <CardContent>
                   <Box display="flex" alignItems="center" flexDirection="row">
                     <Box flex="1 1 auto">
-                      <Typography variant="h5" component="h2" noWrap>
+                      <Typography variant="h4" component="h2" noWrap>
                         {estimates.length}
                       </Typography>
                       <Typography color="textSecondary">Estimates</Typography>
@@ -439,6 +446,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
             </Link>
           </Grid>
         </Grid>
+        {/* Sales & Expenses */}
         <Paper variant="elevation" style={{ padding: '2rem' }}>
           <Typography variant="h6" className="mb-4">
             Sales & Expenses
@@ -459,24 +467,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                   binding="sales"
                   name="Sales"
                   chartType="LineSymbols"
+                  tooltipContent={tooltipContent}
                   style={{ stroke: pallete.sales, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="receipts"
                   name="Receipts"
                   chartType="LineSymbols"
+                  tooltipContent={tooltipContent}
                   style={{ stroke: pallete.receipts, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="expenses"
                   name="Expenses"
                   chartType="LineSymbols"
+                  tooltipContent={tooltipContent}
                   style={{ stroke: pallete.expenses, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="netIncome"
                   name="Net Income"
                   chartType="LineSymbols"
+                  tooltipContent={tooltipContent}
                   style={{ stroke: pallete.netIncome, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
               </FlexChart>
@@ -494,7 +506,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                     >
                       Sales
                     </Typography>
-                    <Typography variant="h5" display="block" align="right" style={{ color: pallete.sales }}>
+                    <Typography variant="h4" display="block" align="right" style={{ color: pallete.sales }}>
                       {formatMoney(summary.overall.sales)}
                     </Typography>
                   </div>
@@ -511,7 +523,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       Receipts
                     </Typography>
                     <Typography
-                      variant="h5"
+                      variant="h4"
                       display="block"
                       align="right"
                       style={{ color: pallete.receipts }}
@@ -532,7 +544,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       Expenses
                     </Typography>
                     <Typography
-                      variant="h5"
+                      variant="h4"
                       display="block"
                       align="right"
                       style={{ color: pallete.expenses }}
@@ -553,7 +565,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       Net Income
                     </Typography>
                     <Typography
-                      variant="h5"
+                      variant="h4"
                       display="block"
                       align="right"
                       style={{ color: pallete.netIncome }}
@@ -566,6 +578,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
             </Grid>
           </Grid>
         </Paper>
+
         <Grid container spacing={3} className="mb-4">
           <Grid item sm={12} lg={6}>
             {renderInvoicesWidget}
