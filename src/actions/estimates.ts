@@ -1,6 +1,6 @@
-import { Action, Estimate, Optional, LineItem } from '../types';
-import { getTimestamp, generateId } from '../utils';
-import { EstimateStatus } from '../enums';
+import { Action, Estimate, Invoice, Optional, LineItem } from 'types';
+import { getTimestamp, generateId } from 'utils';
+import { EstimateStatus, InvoiceStatus, InvoicePaidStatus } from 'enums';
 
 type ReqiredItemRecordProps = 'itemId' | 'price' | 'quantity' | 'unit';
 type OptionalItemRecordProps = 'description' | 'discountType' | 'discountValue' | 'lineTaxes';
@@ -36,6 +36,7 @@ export type EstimateActionsCalculateProps = Pick<
 export type EstimatesActions = {
   addItem: (data: EstimateActionsAddItemProps, estimateId: string) => Estimate | null;
   calculate: (data?: EstimateActionsCalculateProps, estimate?: Estimate) => Estimate;
+  convertToInvoice: (id: string) => string | null;
   update: (data: Estimate) => Estimate | null;
   remove: (ids: string[]) => Estimate[] | null;
   undoRemove: (ids: string[]) => Estimate[] | null;
@@ -200,6 +201,42 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
       );
       updateState({ estimates });
       return recoveredData;
+    },
+
+    /**
+     * Convert the estimate to an invoice.
+     */
+    convertToInvoice: (id) => {
+      const estimate = state.estimates.find((estimate) => id === estimate.id);
+      if (!estimate) return null;
+      const invoice: Invoice = {
+        createdAt: estimate.createdAt,
+        customerId: estimate.customerId,
+        discountAmount: estimate.discountAmount,
+        discountPerItem: estimate.discountPerItem,
+        discountType: estimate.discountType,
+        discountValue: estimate.discountValue,
+        dueDate: estimate.expiryDate,
+        id: generateId(),
+        invoiceDate: estimate.estimateDate,
+        invoiceNumber: `${state.settings.invoicePrefix}-${1001 + state.invoices.length}`,
+        invoiceTemplate: null,
+        isDeleted: false,
+        lineItems: estimate.lineItems,
+        lineTaxes: estimate.lineTaxes,
+        notes: estimate.notes,
+        paidStatus: InvoicePaidStatus.UNPAID,
+        referenceNumber: estimate.referenceNumber,
+        sent: null,
+        status: InvoiceStatus.DRAFT,
+        subTotal: estimate.subTotal,
+        taxAmount: estimate.taxAmount,
+        taxPerItem: estimate.taxPerItem,
+        total: estimate.total,
+        updatedAt: getTimestamp(),
+      };
+      updateState({ invoices: [...state.invoices, invoice] });
+      return invoice.id;
     },
 
     /**

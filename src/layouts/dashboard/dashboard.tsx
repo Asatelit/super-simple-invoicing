@@ -34,6 +34,7 @@ import { MenuButton, UndoButton, StatusChip } from 'components';
 import { AppActions, Customer, Estimate, Invoice, SummaryData } from 'types';
 import { Routes, InvoicePaidStatus, InvoiceStatus } from 'enums';
 import { formatItem, getDivisibleBy } from 'utils';
+import { palette } from 'palette';
 import styles from './dashboard.module.css';
 
 export type DashboardProps = {
@@ -47,19 +48,14 @@ export type DashboardProps = {
   };
 };
 
-const pallete = {
-  sales: 'rgb(0, 0, 0)',
-  receipts: 'rgb(0, 201, 156)',
-  expenses: 'rgb(251, 113, 120)',
-  netIncome: 'rgb(88, 81, 216)',
-};
-
 export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoices, estimates, summary }) => {
   const [invoiceMenuAnchorElement, setInvoiceMenuAnchorElement] = useState<null | HTMLElement>(null);
   const [estimateMenuAnchorElement, setEstimateMenuAnchorElement] = useState<null | HTMLElement>(null);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [currentEstimate, setCurrentEstimate] = useState<Estimate | null>(null);
+  const history = useHistory();
 
+  const customersMap = useMemo(() => new DataMap(customers, 'id', 'name'), [customers]);
   const availableInvoices = useMemo(() => invoices.filter((invoice) => !invoice.isDeleted), [invoices]);
   const availableEstimates = useMemo(() => estimates.filter((estimate) => !estimate.isDeleted), [estimates]);
   const amountDue = useMemo(
@@ -71,10 +67,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
         .reduce((amount, value) => amount + value.total, 0),
     [availableInvoices],
   );
-
-  const customersMap = useMemo(() => new DataMap(customers, 'id', 'name'), [customers]);
-
-  const history = useHistory();
 
   const handlers = {
     invoice: {
@@ -112,17 +104,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
       },
     },
     estimate: {
-      convertToInvoice: () => {},
-
-      edit: () => {
-        if (!currentInvoice) return;
-        history.push(Routes.EstimatesEdit.replace(':id', currentInvoice.id));
+      show: () => {
+        if (!currentEstimate) return;
+        history.push(Routes.EstimatesView.replace(':id', currentEstimate.id));
         handleCloseMenu();
       },
 
-      show: () => {
-        if (!currentInvoice) return;
-        history.push(Routes.EstimatesView.replace(':id', currentInvoice.id));
+      convertToInvoice: () => {
+        if (!currentEstimate) return;
+        const invoiceId = actions.estimates.convertToInvoice(currentEstimate.id);
+        if (invoiceId) history.push(Routes.InvoicesEdit.replace(':id', invoiceId));
+      },
+
+      edit: () => {
+        if (!currentEstimate) return;
+        history.push(Routes.EstimatesEdit.replace(':id', currentEstimate.id));
         handleCloseMenu();
       },
 
@@ -196,15 +192,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
   };
 
   const invoicesGridMenu = [
+    { label: 'Show', icon: <Visibility fontSize="small" />, handler: handlers.invoice.show },
     { label: 'Edit', icon: <Edit fontSize="small" />, handler: handlers.invoice.edit },
-    { label: 'View', icon: <Visibility fontSize="small" />, handler: handlers.invoice.show },
     { label: 'Mark as sent', icon: <CheckCircle fontSize="small" />, handler: handlers.invoice.markSent },
     { label: 'Delete', icon: <Delete fontSize="small" />, handler: handlers.invoice.delete },
   ];
 
   // prettier-ignore
   const estimatesGridMenu = [
-    { label: 'View', icon: <Visibility fontSize="small" />, handler: handlers.estimate.edit },
+    { label: 'Show', icon: <Visibility fontSize="small" />, handler: handlers.estimate.show },
+    { label: 'Edit', icon: <Edit fontSize="small" />, handler: handlers.estimate.edit },
     { label: 'Convert to invoice', icon: <Description fontSize="small" />, handler: handlers.estimate.convertToInvoice },
     { label: 'Mark as sent', icon: <CheckCircle fontSize="small" />, handler: handlers.estimate.markSent },
     { label: 'Mark as accepted', icon: <CheckCircle fontSize="small" />, handler: handlers.estimate.markAccepted, },
@@ -322,7 +319,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
     </Menu>
   );
 
-  const max = getDivisibleBy(summary.overall.sales, 10);
+  const max = getDivisibleBy(
+    Math.max(
+      summary.overall.sales,
+      summary.overall.expenses,
+      summary.overall.netIncome,
+      summary.overall.receipts,
+    ),
+    10,
+  );
 
   const tooltipContent = `
     <div>Sales: <b>{sales:c2}</b></div>
@@ -468,28 +473,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                   name="Sales"
                   chartType="LineSymbols"
                   tooltipContent={tooltipContent}
-                  style={{ stroke: pallete.sales, strokeWidth: 3, fill: 'var(--background-paper)' }}
+                  style={{ stroke: palette.sales, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="receipts"
                   name="Receipts"
                   chartType="LineSymbols"
                   tooltipContent={tooltipContent}
-                  style={{ stroke: pallete.receipts, strokeWidth: 3, fill: 'var(--background-paper)' }}
+                  style={{ stroke: palette.receipts, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="expenses"
                   name="Expenses"
                   chartType="LineSymbols"
                   tooltipContent={tooltipContent}
-                  style={{ stroke: pallete.expenses, strokeWidth: 3, fill: 'var(--background-paper)' }}
+                  style={{ stroke: palette.expenses, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
                 <FlexChartSeries
                   binding="netIncome"
                   name="Net Income"
                   chartType="LineSymbols"
                   tooltipContent={tooltipContent}
-                  style={{ stroke: pallete.netIncome, strokeWidth: 3, fill: 'var(--background-paper)' }}
+                  style={{ stroke: palette.netIncome, strokeWidth: 3, fill: 'var(--background-paper)' }}
                 />
               </FlexChart>
             </Grid>
@@ -506,7 +511,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                     >
                       Sales
                     </Typography>
-                    <Typography variant="h4" display="block" align="right" style={{ color: pallete.sales }}>
+                    <Typography variant="h4" display="block" align="right" style={{ color: palette.sales }}>
                       {formatMoney(summary.overall.sales)}
                     </Typography>
                   </div>
@@ -526,7 +531,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       variant="h4"
                       display="block"
                       align="right"
-                      style={{ color: pallete.receipts }}
+                      style={{ color: palette.receipts }}
                     >
                       {formatMoney(summary.overall.receipts)}
                     </Typography>
@@ -547,7 +552,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       variant="h4"
                       display="block"
                       align="right"
-                      style={{ color: pallete.expenses }}
+                      style={{ color: palette.expenses }}
                     >
                       {formatMoney(summary.overall.expenses)}
                     </Typography>
@@ -568,7 +573,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
                       variant="h4"
                       display="block"
                       align="right"
-                      style={{ color: pallete.netIncome }}
+                      style={{ color: palette.netIncome }}
                     >
                       {formatMoney(summary.overall.netIncome)}
                     </Typography>
