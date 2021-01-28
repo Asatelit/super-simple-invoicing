@@ -1,3 +1,5 @@
+import { SummaryData } from 'types';
+
 export type Customer = {
   avatar: string;
   contactName: string;
@@ -30,17 +32,9 @@ export type Customer = {
   billingZip: string;
 };
 
-export type CustomerSummaryData = {
-  month?: string;
-  sales: number;
-  receipts: number;
-  expenses: number;
-  netIncome: number;
-};
-
 export type MappedCustomer = Customer & {
   summary: {
-    monthly: CustomerSummaryData[];
-    overall: CustomerSummaryData;
+    monthly: SummaryData[];
+    overall: SummaryData;
   };
 };

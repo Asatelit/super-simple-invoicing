@@ -1,6 +1,14 @@
 import React, { Fragment, ReactElement, useContext, useEffect, useCallback, useMemo } from 'react';
 import { Switch as SwitchRoute, Route, Redirect, useHistory } from 'react-router-dom';
-import { eachMonthOfInterval, startOfYear, startOfMonth, endOfYear, endOfMonth, format } from 'date-fns';
+import {
+  eachMonthOfInterval,
+  isWithinInterval,
+  startOfYear,
+  startOfMonth,
+  endOfYear,
+  endOfMonth,
+  format,
+} from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import clsx from 'clsx';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -113,6 +121,47 @@ function App() {
     ),
   };
 
+  const summary = useMemo(() => {
+    const currentDate = new Date();
+    const months = eachMonthOfInterval({
+      start: startOfYear(currentDate),
+      end: endOfYear(currentDate),
+    });
+
+    const getOverallData = ({ start, end }: DateRange) => {
+      const relevantInvoices = invoices.filter((invoice) =>
+        isWithinInterval(invoice.invoiceDate, { start, end }),
+      );
+      const relevantPayments = payments.filter((payment) =>
+        isWithinInterval(payment.paymentDate, { start, end }),
+      );
+      const relevantExpenses = expenses.filter((expense) =>
+        isWithinInterval(expense.expenseDate, { start, end }),
+      );
+
+      const overalSales = relevantInvoices.reduce((a, b) => a + (b['total'] || 0), 0);
+      const overallReceipts = relevantPayments.reduce((a, b) => a + (b['amount'] || 0), 0);
+      const overallExpenses = relevantExpenses.reduce((a, b) => a + (b['amount'] || 0), 0);
+      const overalNetIncome = overallReceipts - overallExpenses;
+
+      return {
+        sales: overalSales,
+        receipts: overallReceipts,
+        expenses: overallExpenses,
+        netIncome: overalNetIncome,
+      };
+    };
+
+    // prettier-ignore
+    return {
+            overall: { ...getOverallData({ start: startOfYear(currentDate), end: endOfYear(currentDate) }) },
+            monthly: months.map(month => ({
+              ...getOverallData({ start: startOfMonth(month), end: endOfMonth(month) }),
+              month: format(month, 'MMM')
+            }))
+        };
+  }, [expenses, invoices, payments]);
+
   const itemsCollection: DataCollection<Item> = useMemo(
     () =>
       items.reduce((obj, item) => {
@@ -142,7 +191,7 @@ function App() {
   // prettier-ignore
   const layoutRoutes = [
     { path: Routes.Admin, name: 'Admin', c: <></> },
-    { path: Routes.Dashboard, name: 'Dashboard', c: <L.Dashboard actions={actions} invoices={invoices} estimates={estimates} customers={customers} /> },
+    { path: Routes.Dashboard, name: 'Dashboard', c: <L.Dashboard actions={actions} invoices={invoices} estimates={estimates} customers={customers} summary={summary} /> },
     { path: Routes.CustomersList, name: 'Customers', c: <L.CustomersList actions={actions} customers={mapped.customers} /> },
     { path: Routes.CustomersCreate, name: 'New Customer', c: <L.CustomersEditor actions={actions} /> },
     { path: Routes.CustomersEdit, name: 'Edit Customer', c: <L.CustomersEditor actions={actions} customers={customers} /> },

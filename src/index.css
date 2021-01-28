@@ -16,6 +16,11 @@ code {
   display: none !important;
 }
 
+.unstyled {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .mr-1 { margin-right: 4px !important; }
 .mr-2 { margin-right: 8px !important; }
 .mr-3 { margin-right: 12px !important; }
@@ -40,6 +45,34 @@ code {
 .my-2 { margin-top: 8px !important; margin-bottom: 8px !important; }
 .my-3 { margin-top: 12px !important; margin-bottom: 12px !important; }
 .my-4 { margin-top: 16px !important; margin-bottom: 16px !important; }
+
+
+.wj-flexchart {
+  border: none;
+}
+
+
+.wj-flexchart .wj-label {
+  fill: currentColor;
+}
+
+.wj-flexchart .wj-plot-area {
+  outline: 1px solid var(--divider);
+}
+
+.wj-flexchart .wj-axis-x .wj-gridline,
+.wj-flexchart .wj-axis-y .wj-gridline {
+  opacity: .25;
+  stroke-width: 1px;
+}
+
+.wj-flexchart .wj-axis-x .wj-gridline-minor,
+.wj-flexchart .wj-axis-y .wj-gridline-minor {
+    opacity: .25;
+    stroke: var(--divider);
+    stroke-dasharray: 0;
+    stroke-width: .25px;
+}
 
 .wj-control {
   background: var(--background-paper);

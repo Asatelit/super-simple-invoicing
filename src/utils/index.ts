@@ -75,3 +75,10 @@ export function formatItem(_: any, e: any) {
       break;
   }
 }
+
+/**
+ * Find next nearest number divisible by n.
+ */
+export function getDivisibleBy(value: number, n: number) {
+  return n * Math.ceil(value / n);
+}

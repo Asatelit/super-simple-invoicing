@@ -28,3 +28,11 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 export type DateRange = { start: Date; end: Date };
 
 export type DataCollection<T> = { [key: string]: T };
+
+export type SummaryData = {
+  month?: string;
+  sales: number;
+  receipts: number;
+  expenses: number;
+  netIncome: number;
+};

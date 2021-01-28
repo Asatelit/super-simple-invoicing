@@ -38,8 +38,6 @@ const NoMatch = () => (
   </div>
 );
 
-console.info(window);
-
 ReactDOM.render(
   <Suspense fallback={<div>Loading...</div>}>
     <AppContextProvider>
