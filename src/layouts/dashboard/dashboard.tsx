@@ -17,6 +17,7 @@ import {
   MenuItem,
   Paper,
   Box,
+  Button,
 } from '@material-ui/core';
 import {
   Edit,
@@ -237,9 +238,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
 
   const renderInvoicesWidget = (
     <div className={styles.widget}>
-      <Typography variant="h5" component="h2" className="mb-4">
-        Due Invoices
-      </Typography>
+      <Box display="flex" alignItems="center" mb={3}>
+        <Box flexGrow="1">
+          <Typography variant="h5" component="h2">
+            Due Invoices
+          </Typography>
+        </Box>
+        <Button variant="outlined" color="primary" size="small" component={Link} to={Routes.InvoicesList}>
+          View All
+        </Button>
+      </Box>
+
       <FlexGrid {...gridCommonProps} itemsSource={availableInvoices.slice(0, 5)}>
         <FlexGridColumn header="Due On" binding="dueDate" format="dd MMM yyyy" width={100} />
         <FlexGridColumn
@@ -263,9 +272,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ actions, customers, invoic
 
   const renderEstimatesWidget = (
     <div className={styles.widget}>
-      <Typography variant="h5" component="h2" className="mb-4">
-        Recent Estimates
-      </Typography>
+      <Box display="flex" alignItems="center" mb={3}>
+        <Box flexGrow="1">
+          <Typography variant="h5" component="h2">
+            Recent Estimates
+          </Typography>
+        </Box>
+        <Button variant="outlined" color="primary" size="small" component={Link} to={Routes.EstimatesList}>
+          View All
+        </Button>
+      </Box>
+
       <FlexGrid {...gridCommonProps} itemsSource={availableEstimates.slice(0, 5)}>
         <FlexGridColumn header="Date" binding="expiryDate" format="dd MMM yyyy" width={100} />
         <FlexGridColumn
