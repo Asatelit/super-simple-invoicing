@@ -14,4 +14,5 @@ export * from './invoicesView/invoicesView';
 export * from './itemsEditor/itemsEditor';
 export * from './itemsList/itemsList';
 export * from './paymentsList/paymentsList';
+export * from './paymentsEditor/paymentsEditor';
 export * from './settings/settings';

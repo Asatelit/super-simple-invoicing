@@ -5,20 +5,20 @@ type CommonOptionalPaymentProps = 'invoiceId' | 'paymentMode' | 'notes';
 type CommonRequiredPaymentProps = 'customerId' | 'paymentDate' | 'paymentNumber' | 'amount';
 
 // prettier-ignore
-type AddPaymentData = Pick<
+export type PaymentDataAdd = Pick<
   Optional<Payment, CommonOptionalPaymentProps>,
   CommonRequiredPaymentProps | CommonOptionalPaymentProps
 >;
 
 // prettier-ignore
-type UpdatePaymentData = Pick<
+export type PaymentDataUpdate = Pick<
   Optional<Payment, 'customerId' | 'paymentDate' | 'paymentNumber' | 'amount' | CommonOptionalPaymentProps>,
   'id' | CommonRequiredPaymentProps | CommonOptionalPaymentProps
 >;
 
 export type PaymentsActions = {
-  add: (data: AddPaymentData) => Payment;
-  update: (data: UpdatePaymentData) => Payment | null;
+  add: (data: PaymentDataAdd) => Payment;
+  update: (data: PaymentDataUpdate) => Payment | null;
   delete: (ids: string[]) => Payment[] | null;
 };
 
