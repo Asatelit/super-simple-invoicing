@@ -228,6 +228,8 @@ function App() {
     { path: Routes.PaymentsCreate, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
     { path: Routes.PaymentsEdit, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
+    { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
+    { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.Reports, name: 'Reports', c: <></> },
     { path: Routes.Settings, name: 'Settings', exact: false, c: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];

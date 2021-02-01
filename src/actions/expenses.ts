@@ -5,20 +5,20 @@ type CommonOptionalExpenseProps = 'customerId' | 'notes' | 'attachmentReceipt';
 type CommonRequiredExpenseProps = 'expenseDate' | 'amount' | 'expenseCategory';
 
 // prettier-ignore
-type AddExpenseData = Pick<
+export type ExpensesActionsAddProps = Pick<
   Optional<Expense, CommonOptionalExpenseProps>,
   CommonRequiredExpenseProps | CommonOptionalExpenseProps
 >;
 
 // prettier-ignore
-type UpdateExpenseData = Pick<
+export type ExpensesActionsUpdateProps = Pick<
   Optional<Expense, CommonOptionalExpenseProps>,
   'id' | CommonRequiredExpenseProps | CommonOptionalExpenseProps
 >;
 
 export type ExpensesActions = {
-  add: (data: AddExpenseData) => Expense;
-  update: (data: UpdateExpenseData) => Expense | null;
+  add: (data: ExpensesActionsAddProps) => Expense;
+  update: (data: ExpensesActionsUpdateProps) => Expense | null;
   delete: (ids: string[]) => Expense[] | null;
 };
 

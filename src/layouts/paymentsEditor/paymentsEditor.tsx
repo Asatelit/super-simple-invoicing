@@ -99,8 +99,8 @@ export const PaymentsEditor = ({
             <KeyboardDatePicker
               fullWidth
               required
-              id="InvoicesEditorInvoiceDate"
-              name="InvoicesEditorInvoiceDate"
+              id="PaymentInvoiceDate"
+              name="PaymentInvoiceDate"
               size="small"
               inputVariant="outlined"
               label="Invoice Date"
