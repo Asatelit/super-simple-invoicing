@@ -7,6 +7,7 @@
     "@grapecity/wijmo": "^5.20203.748",
     "@grapecity/wijmo.grid": "^5.20203.748",
     "@grapecity/wijmo.grid.cellmaker": "^5.20203.748",
+    "@grapecity/wijmo.pdf": "^5.20203.766",
     "@grapecity/wijmo.react.chart": "^5.20203.748",
     "@grapecity/wijmo.react.grid": "^5.20203.748",
     "@grapecity/wijmo.react.grid.filter": "^5.20203.748",

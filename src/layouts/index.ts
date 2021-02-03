@@ -16,4 +16,5 @@ export * from './itemsEditor/itemsEditor';
 export * from './itemsList/itemsList';
 export * from './paymentsEditor/paymentsEditor';
 export * from './paymentsList/paymentsList';
+export * from './paymentsView/paymentsView';
 export * from './settings/settings';

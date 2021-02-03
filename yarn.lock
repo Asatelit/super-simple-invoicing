@@ -1486,6 +1486,13 @@
     "@grapecity/wijmo.grid.detail" "5.20203.748"
     "@grapecity/wijmo.input" "5.20203.748"
 
+"@grapecity/wijmo.pdf@^5.20203.766":
+  version "5.20203.766"
+  resolved "https://registry.yarnpkg.com/@grapecity/wijmo.pdf/-/wijmo.pdf-5.20203.766.tgz#1516ea28a7b776f58ca19bca98862e553ee261d9"
+  integrity sha512-DiAcAlCVTvpJ31+gIRlblyVHnInwYq0IiPDXfnrPVTjurX90LMPEqSnO6+6tSL2Qolx1RWxyQw7ZxDPICq3dzQ==
+  dependencies:
+    "@grapecity/wijmo" "5.20203.766"
+
 "@grapecity/wijmo.react.base@5.20203.748":
   version "5.20203.748"
   resolved "https://registry.yarnpkg.com/@grapecity/wijmo.react.base/-/wijmo.react.base-5.20203.748.tgz#1f19378bd8ded504488b64ca96138aaa0ae208f4"
@@ -1528,12 +1535,24 @@
   resolved "https://registry.yarnpkg.com/@grapecity/wijmo.styles/-/wijmo.styles-5.20203.748.tgz#8f42a7a44d9263473528ab92ccc59938d20244da"
   integrity sha512-znyhNrXgUEHe/52PSJTX7AfdOPIfEWGucGywFiQKC3dZLpbchugL6kyQELWLOvdFG7bzQFbFfb7/WcvwG62WbA==
 
+"@grapecity/wijmo.styles@5.20203.766":
+  version "5.20203.766"
+  resolved "https://registry.yarnpkg.com/@grapecity/wijmo.styles/-/wijmo.styles-5.20203.766.tgz#0503ec5537b48e0549785d032105ac1318f5a1cc"
+  integrity sha512-Wp5OqwTIzISP5EqKaVvye6ZdZbSjA08d0LtM/LuozwbJkvJCnRIjVJD+xfeJ0Qqi8MXkxodkPlDil3C/rjeg0Q==
+
 "@grapecity/wijmo@5.20203.748", "@grapecity/wijmo@^5.20203.748":
   version "5.20203.748"
   resolved "https://registry.yarnpkg.com/@grapecity/wijmo/-/wijmo-5.20203.748.tgz#13ad03f480c60a00771dab049cea985670c827ac"
   integrity sha512-pDyXDVoaeg5k+OK7HCVJoMVJcLvEZDBmF2i0W07oVVYFYJ1WwvU5xMPsYj6ekRh7AGPNyGi3eqMrI2oBlu3DOg==
   dependencies:
     "@grapecity/wijmo.styles" "5.20203.748"
+
+"@grapecity/wijmo@5.20203.766":
+  version "5.20203.766"
+  resolved "https://registry.yarnpkg.com/@grapecity/wijmo/-/wijmo-5.20203.766.tgz#eb61e10ac6a92504d31acd594b31aa6b586434de"
+  integrity sha512-6QWOqw/AL/c4bQcmof1E+XUDmY20dRH9shzIx9TcRarGYK+Jqbnna2xHZB4jat7Ak5cKA4YyD4mKp03eCY6DZg==
+  dependencies:
+    "@grapecity/wijmo.styles" "5.20203.766"
 
 "@grpc/grpc-js@^1.0.0":
   version "1.2.2"

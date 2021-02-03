@@ -5,5 +5,6 @@ export * from './invoice/invoice';
 export * from './listItemNavLink/listItemNavLink';
 export * from './menuButton/menuButton';
 export * from './nav/nav';
+export * from './payment/payment';
 export * from './statusChip/statusChip';
 export * from './undoButton/undoButton';

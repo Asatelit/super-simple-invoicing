@@ -33,7 +33,15 @@ import { appContext } from './hooks';
 import { navItems } from './components';
 import { Routes } from './enums';
 import { flatten } from './utils';
-import { MappedInvoice, MappedCustomer, MappedEstimate, DateRange, DataCollection, Item } from './types';
+import {
+  MappedInvoice,
+  MappedCustomer,
+  MappedEstimate,
+  Customer,
+  DateRange,
+  DataCollection,
+  Item,
+} from './types';
 import * as L from './layouts';
 import * as D from './dialogs';
 import styles from './app.module.css';
@@ -188,6 +196,15 @@ function App() {
     [items],
   );
 
+  const customersCollection: DataCollection<Customer> = useMemo(
+    () =>
+      customers.reduce((obj, item) => {
+        obj[item['id']] = item;
+        return obj;
+      }, {}),
+    [customers],
+  );
+
   // Transpose Material UI palette to CSS variables.
   useEffect(() => {
     if (!root?.style) return;
@@ -227,6 +244,7 @@ function App() {
     { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
     { path: Routes.PaymentsCreate, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
     { path: Routes.PaymentsEdit, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
+    { path: Routes.PaymentsView, name: 'Payments', c: <L.PaymentsView customers={customersCollection} payments={payments} settings={settings} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
