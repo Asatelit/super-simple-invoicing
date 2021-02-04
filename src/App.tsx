@@ -112,10 +112,19 @@ function App() {
             end: endOfYear(currentDate),
           });
 
-          const getOverallData = (dateRange?: DateRange) => {
-            const relevantInvoices = invoices.filter((invoice) => invoice.customerId === customer.id);
-            const relevantPayments = payments.filter((payment) => payment.customerId === customer.id);
-            const relevantExpenses = expenses.filter((expense) => expense.customerId === customer.id);
+          const getOverallData = ({ start, end }: DateRange) => {
+            const relevantInvoices = invoices.filter(
+              (invoice) =>
+                invoice.customerId === customer.id && isWithinInterval(invoice.invoiceDate, { start, end }),
+            );
+            const relevantPayments = payments.filter(
+              (payment) =>
+                payment.customerId === customer.id && isWithinInterval(payment.paymentDate, { start, end }),
+            );
+            const relevantExpenses = expenses.filter(
+              (expense) =>
+                expense.customerId === customer.id && isWithinInterval(expense.expenseDate, { start, end }),
+            );
 
             const overalSales = relevantInvoices.reduce((a, b) => a + (b['total'] || 0), 0);
             const overallReceipts = relevantPayments.reduce((a, b) => a + (b['amount'] || 0), 0);
@@ -130,15 +139,16 @@ function App() {
             };
           };
 
-          // prettier-ignore
           return {
             ...customer,
             summary: {
-              overall: { ...getOverallData() },
-              monthly: months.map(month => ({
+              overall: {
+                ...getOverallData({ start: startOfYear(currentDate), end: endOfYear(currentDate) }),
+              },
+              monthly: months.map((month) => ({
                 ...getOverallData({ start: startOfMonth(month), end: endOfMonth(month) }),
-                month: format(month, 'MMM')
-              }))
+                month: format(month, 'MMM'),
+              })),
             },
           };
         }),
@@ -177,14 +187,13 @@ function App() {
       };
     };
 
-    // prettier-ignore
     return {
-            overall: { ...getOverallData({ start: startOfYear(currentDate), end: endOfYear(currentDate) }) },
-            monthly: months.map(month => ({
-              ...getOverallData({ start: startOfMonth(month), end: endOfMonth(month) }),
-              month: format(month, 'MMM')
-            }))
-        };
+      overall: { ...getOverallData({ start: startOfYear(currentDate), end: endOfYear(currentDate) }) },
+      monthly: months.map((month) => ({
+        ...getOverallData({ start: startOfMonth(month), end: endOfMonth(month) }),
+        month: format(month, 'MMM'),
+      })),
+    };
   }, [expenses, invoices, payments]);
 
   const itemsCollection: DataCollection<Item> = useMemo(
