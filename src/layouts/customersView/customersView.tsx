@@ -7,7 +7,7 @@ import { FlexChart, FlexChartLegend, FlexChartSeries, FlexChartAxis } from '@gra
 import { Common } from 'layouts';
 import { BreadcrumbsCrumbProp, ListItemNavLink } from 'components';
 import { MappedCustomer } from 'types';
-import { formatItem, getDivisibleBy } from 'utils';
+import { getDivisibleBy } from 'utils';
 import { Routes } from 'enums';
 import { palette } from 'palette';
 import styles from './customersView.module.css';

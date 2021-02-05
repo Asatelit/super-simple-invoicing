@@ -1,10 +1,24 @@
-import { subDays, eachDayOfInterval, addDays } from 'date-fns';
+import { eachDayOfInterval, addDays, startOfYear } from 'date-fns';
 import { INIT_STATE } from './assets';
 import { getRandomInt, getTimestamp } from './utils';
 import { AppState } from './types';
 import * as A from './actions';
 
 const fake = {
+  companyNames: [
+    'Acme',
+    'Globex',
+    'Soylent',
+    'Initech',
+    'Hooli',
+    'Massive Dynamic',
+    'Spencer Group',
+    'Stroman-Zemlak',
+    'Dare-Mertz',
+    'Ledner PLC',
+    'Schiller-Skiles',
+    `O'Hara-Cole`,
+  ],
   names: [
     'Jared Barnett',
     'Julia Holland',
@@ -102,9 +116,10 @@ export function generateDemoData(): AppState {
 
   // Generate Customers
   const customers = () => A.createCustomersActions(state(), updateState);
-  const demoCustomers = fake.names.map((name) =>
+  const demoCustomers = fake.companyNames.map((companyName, index) =>
     customers().add({
-      name,
+      name: companyName,
+      contactName: fake.names[index] || '',
       phone: createPhoneNumber(),
     }),
   );
@@ -114,11 +129,11 @@ export function generateDemoData(): AppState {
   fake.products.forEach((name) =>
     items().add({
       name,
-      price: getRandomInt(1, 100),
+      price: getRandomInt(1, 25),
     }),
   );
 
-  const dateRange = { start: subDays(new Date(), 5), end: new Date() };
+  const dateRange = { start: startOfYear(new Date()), end: new Date() };
   const rangeDays = eachDayOfInterval(dateRange);
 
   rangeDays.forEach((day) => {
@@ -127,7 +142,7 @@ export function generateDemoData(): AppState {
     const itemsCount = itemsList.length - 1;
 
     // Create fake estimates
-    for (let i = 1; i < getRandomInt(1, 3); i += 1) {
+    for (let i = 1; i < getRandomInt(1, 2); i += 1) {
       // Selecting a random number of items
       const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
@@ -155,7 +170,7 @@ export function generateDemoData(): AppState {
     }
 
     // Create fake invoices
-    for (let i = 1; i < getRandomInt(1, 3); i += 1) {
+    for (let i = 1; i < getRandomInt(1, 2); i += 1) {
       // Selecting a random number of items
       const itemIds = Array.from({ length: getRandomInt(1, itemsCount) }, () => getRandomInt(0, itemsCount));
 
@@ -188,9 +203,9 @@ export function generateDemoData(): AppState {
   demoCustomers.forEach((customer, index) =>
     payments().add({
       paymentDate: getTimestamp(),
-      amount: getRandomInt(1, 100),
+      amount: getRandomInt(1, 200),
       customerId: customer.id,
-      paymentNumber: `PAY-00000${index}`,
+      paymentNumber: `PAY-${1001 + index}`,
       paymentMode: 'Bank Transfer',
     }),
   );

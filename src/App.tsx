@@ -257,7 +257,7 @@ function App() {
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
-    { path: Routes.Reports, name: 'Reports', c: <></> },
+    { path: Routes.Reports, name: 'Reports', c: <L.Reports invoices={invoices} customers={customersCollection} /> },
     { path: Routes.Settings, name: 'Settings', exact: false, c: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];
 

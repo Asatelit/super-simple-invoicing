@@ -6,5 +6,6 @@ export * from './expense';
 export * from './invoice';
 export * from './item';
 export * from './payment';
+export * from './reports';
 export * from './settings';
 export * from './tax';

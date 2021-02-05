@@ -1,0 +1,9 @@
+.paper {
+  height: calc(100vh - 292px);
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  margin-bottom: 24px;
+}
