@@ -8,4 +8,5 @@ export * from './nav/nav';
 export * from './payment/payment';
 export * from './statusChip/statusChip';
 export * from './undoButton/undoButton';
-export * from './salesCustomerReport/salesCustomerReport';
+export * from './salesByCustomerReport/salesByCustomerReport';
+export * from './salesByItemReport/salesByItemReport';

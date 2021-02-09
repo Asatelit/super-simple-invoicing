@@ -2,20 +2,20 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   PdfDocument,
   PdfFont,
-  PdfPen,
   PdfSolidBrush,
   PdfTextHorizontalAlign,
   IPdfTextDrawSettings,
 } from '@grapecity/wijmo.pdf';
-import { SalesByCustomer } from 'types';
+import { formatMoney } from 'accounting';
+import { SalesByItem } from 'types';
 import { appContext } from 'hooks';
 
-export interface SalesCustomerReportProps {
+export interface SalesByItemReportProps {
   formatedDateRange: string;
-  data: SalesByCustomer;
+  data: SalesByItem;
 }
 
-export const SalesCustomerReport = ({ formatedDateRange, data }: SalesCustomerReportProps) => {
+export const SalesByItemReport = ({ formatedDateRange, data }: SalesByItemReportProps) => {
   const [src, setSrc] = useState('');
   const { state } = useContext(appContext);
 
@@ -73,7 +73,7 @@ export const SalesCustomerReport = ({ formatedDateRange, data }: SalesCustomerRe
     doc.moveDown();
     doc.moveDown();
     doc.moveDown();
-    text('Sales Report: By Customer', { font: headerFont, align: PdfTextHorizontalAlign.Center }, 0, doc.y);
+    text('Sales Report: By Item', { font: headerFont, align: PdfTextHorizontalAlign.Center }, 0, doc.y);
     doc.moveDown();
     doc.moveDown();
     doc.moveDown();
@@ -81,20 +81,11 @@ export const SalesCustomerReport = ({ formatedDateRange, data }: SalesCustomerRe
     doc.moveDown();
 
     Object.keys(data.data).forEach((key) => {
-      const lines = data.data[key];
-      // Customer name
-      text(key, { font: bolderFont, align: PdfTextHorizontalAlign.Left }, 0, doc.y);
-      doc.moveDown();
-      // Iterate Lines
-      lines.forEach((line) => {
-        const lineY = doc.y;
-        const lineLabel = `${line.date} ${line.number}`;
-        text(lineLabel, { font: regularFont, align: PdfTextHorizontalAlign.Left, brush: new PdfSolidBrush('#909090') }, 0, lineY);
-        text(line.amount, { font: regularFont, align: PdfTextHorizontalAlign.Right }, 350, lineY);
-      });
-      // Divider
-      doc.moveDown();
-      doc.paths.moveTo(0, doc.y).lineTo(doc.width, doc.y).stroke(new PdfPen('#CCCCCC', 1));
+      const line = data.data[key];
+      const lineY = doc.y;
+      text(key, { font: bolderFont, align: PdfTextHorizontalAlign.Left }, 0, lineY);
+      text(`${line.qty}`, { font: regularFont, align: PdfTextHorizontalAlign.Left, brush: new PdfSolidBrush('#909090') }, 350, lineY);
+      text(formatMoney(line.amount), { font: regularFont, align: PdfTextHorizontalAlign.Right }, 350, lineY);
       doc.moveDown();
     });
 
@@ -104,9 +95,8 @@ export const SalesCustomerReport = ({ formatedDateRange, data }: SalesCustomerRe
     doc.moveDown();
     const totalY = doc.y;
     text('Total Sales', { font: bolderFont, align: PdfTextHorizontalAlign.Left }, 0, totalY);
-    text(data.totalAmount, { font: bolderFont, align: PdfTextHorizontalAlign.Right }, 350, totalY);
+    text(formatMoney(data.totalAmount), { font: bolderFont, align: PdfTextHorizontalAlign.Right }, 350, totalY);
     doc.moveDown();
-
 
     doc.end();
   }, [formatedDateRange, data, settings]);

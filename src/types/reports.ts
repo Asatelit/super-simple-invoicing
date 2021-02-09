@@ -8,3 +8,11 @@ export interface SalesByCustomer {
   }[]>;
   totalAmount: string;
 }
+
+export interface SalesByItem {
+  data: DataCollection<{
+    qty: string;
+    amount: string;
+  }>;
+  totalAmount: number;
+}
