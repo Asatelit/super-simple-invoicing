@@ -11,8 +11,13 @@ export interface SalesByCustomer {
 
 export interface SalesByItem {
   data: DataCollection<{
-    qty: string;
-    amount: string;
+    qty: number;
+    amount: number;
   }>;
   totalAmount: number;
+}
+
+export interface ExpensesReportData {
+  data: DataCollection<number>;
+  totalExpense: number;
 }

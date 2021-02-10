@@ -10,3 +10,4 @@ export * from './statusChip/statusChip';
 export * from './undoButton/undoButton';
 export * from './salesByCustomerReport/salesByCustomerReport';
 export * from './salesByItemReport/salesByItemReport';
+export * from './expensesReport/expensesReport';

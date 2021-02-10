@@ -4,18 +4,29 @@ import { formatMoney } from 'accounting';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { Container, FormGroup, Paper, Grid, Tabs, Tab, Divider } from '@material-ui/core';
 import { Common } from 'layouts';
-import { Customer, Invoice, SalesByCustomer, SalesByItem, DateRange, DataCollection, Item } from 'types';
-import { BreadcrumbsCrumbProp, SalesByItemReport, SalesByCustomerReport } from 'components';
+import {
+  Customer,
+  Invoice,
+  SalesByCustomer,
+  SalesByItem,
+  DateRange,
+  DataCollection,
+  Item,
+  Expense,
+  ExpensesReportData,
+} from 'types';
+import { BreadcrumbsCrumbProp, SalesByItemReport, SalesByCustomerReport, ExpensesReport } from 'components';
 import styles from './reports.module.css';
 
 export type ReportsProps = {
   breadcrumbs?: BreadcrumbsCrumbProp[];
   invoices: Invoice[];
+  expenses: Expense[];
   customers: DataCollection<Customer>;
   items: DataCollection<Item>;
 };
 
-export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, customers }) => {
+export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, customers, expenses }) => {
   const [tab, setTab] = useState(0);
   const [currentDateRange, setCurrentDateRange] = useState<DateRange>({
     start: startOfMonth(new Date()),
@@ -70,7 +81,28 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
         totalAmount: Object.keys(data).reduce((acc, key) => acc + data[key].amount, 0),
       };
     },
-    [customers, invoices],
+    [items, invoices],
+  );
+
+  const getExpenses = useCallback(
+    (dateRange: DateRange): ExpensesReportData => {
+      const relevantExpenses = expenses.filter((expense) => isWithinInterval(expense.expenseDate, dateRange));
+      let data = {};
+
+      relevantExpenses.forEach((expense) => {
+        const updProp = data[expense.expenseCategory];
+        data = {
+          ...data,
+          [expense.expenseCategory]: updProp || 0 + expense.amount,
+        };
+      });
+
+      return {
+        data,
+        totalExpense: Object.keys(data).reduce((acc, key) => acc + data[key], 0),
+      };
+    },
+    [expenses],
   );
 
   const renderDateRangeForm = () => (
@@ -116,6 +148,7 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
         >
           <Tab label="Sales by Customer" />
           <Tab label="Sales by Items" />
+          <Tab label="Expenses" />
         </Tabs>
         <Divider className="mb-4" />
         <Grid container spacing={4}>
@@ -140,6 +173,15 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
                     'MM/dd/yyyy',
                   )}`}
                   data={getSalesByItems(currentDateRange)}
+                />
+              )}
+              {tab === 2 && (
+                <ExpensesReport
+                  formatedDateRange={`${format(currentDateRange.start, 'MM/dd/yyyy')} - ${format(
+                    currentDateRange.end,
+                    'MM/dd/yyyy',
+                  )}`}
+                  data={getExpenses(currentDateRange)}
                 />
               )}
             </Paper>
