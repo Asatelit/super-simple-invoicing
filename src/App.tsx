@@ -14,6 +14,7 @@ import clsx from 'clsx';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import {
   AppBar,
+  Box,
   CssBaseline,
   Dialog,
   Divider,
@@ -29,8 +30,10 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import SearchIcon from '@material-ui/icons/Search';
+import NightsStayIcon from '@material-ui/icons/NightsStay';
+import CloseIcon from '@material-ui/icons/Close';
 import { appContext } from './hooks';
-import { navItems } from './components';
+import { navItems, SearchResults } from './components';
 import { Routes } from './enums';
 import { flatten } from './utils';
 import {
@@ -57,6 +60,7 @@ type MappedData = {
 function App() {
   const [open, setOpen] = React.useState(true);
   const [isDarkMode, setIsDarkMode] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [context, actions] = useContext(appContext);
   const history = useHistory();
 
@@ -66,7 +70,7 @@ function App() {
   const theme = React.useMemo(
     () =>
       createMuiTheme({
-        palette: { type: isDarkMode ? 'dark' : 'light' },
+        palette: { type: isDarkMode ? 'dark' : 'light', primary: { main: '#0644d7' }, secondary: { main: '#feed5f' } },
         typography: {
           fontFamily: [
             'Montserrat',
@@ -313,19 +317,40 @@ function App() {
                 <MenuIcon />
               </IconButton>
               <div className={styles.search}>
-                <div className={styles.searchIcon}>
-                  <SearchIcon />
-                </div>
-                <InputBase
-                  placeholder="Search…"
-                  classes={{
-                    root: styles.inputRoot,
-                    input: styles.inputInput,
-                  }}
-                  inputProps={{ 'aria-label': 'search' }}
-                />
+                <Box display="flex" alignItems="center">
+                  <div className={styles.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  {searchTerm && (
+                    <div className={styles.closeIcon} onClick={() => setSearchTerm('')}>
+                      <CloseIcon />
+                    </div>
+                  )}
+                  <InputBase
+                    placeholder="Search"
+                    classes={{
+                      root: styles.inputRoot,
+                      input: styles.inputInput,
+                    }}
+                    inputProps={{ 'aria-label': 'search' }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </Box>
+
+                {searchTerm && (
+                  <SearchResults
+                    searchTerm={searchTerm}
+                    customers={customers}
+                    estimate={estimates}
+                    invoices={invoices}
+                    items={items}
+                    expenses={expenses}
+                    payments={payments}
+                  />
+                )}
               </div>
               <div className={styles.grow} />
+              <NightsStayIcon fontSize="small" color="secondary" />
               <Switch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />
             </Toolbar>
           </AppBar>

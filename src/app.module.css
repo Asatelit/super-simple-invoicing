@@ -13,9 +13,9 @@
 .search {
   position: relative;
   border-radius: 3px;
-  background-color: rgba(255,255,255,0.15);
+  background-color: rgba(255, 255, 255, 0.15);
   margin-right: 12px;
-  width: auto;
+  width: 320px;
 }
 
 .searchIcon {
@@ -26,6 +26,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.closeIcon {
+  padding: 6px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .root .inputRoot {

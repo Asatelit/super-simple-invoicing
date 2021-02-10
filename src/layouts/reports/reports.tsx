@@ -1,8 +1,32 @@
 import React, { useState, useCallback } from 'react';
-import { format, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
+import {
+  format,
+  isWithinInterval,
+  startOfMonth,
+  endOfMonth,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfQuarter,
+  endOfQuarter,
+  startOfYear,
+  endOfYear,
+} from 'date-fns';
 import { formatMoney } from 'accounting';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { Container, FormGroup, Paper, Grid, Tabs, Tab, Divider } from '@material-ui/core';
+import {
+  Container,
+  FormControl,
+  Select,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Grid,
+  Tabs,
+  Tab,
+  Divider,
+} from '@material-ui/core';
 import { Common } from 'layouts';
 import {
   Customer,
@@ -28,10 +52,46 @@ export type ReportsProps = {
 
 export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, customers, expenses }) => {
   const [tab, setTab] = useState(0);
+  const [datePreset, setDatePreset] = useState<
+    'Today' | 'This Week' | 'This Month' | 'This Quarter' | 'This Year' | 'Custom'
+  >('This Month');
   const [currentDateRange, setCurrentDateRange] = useState<DateRange>({
     start: startOfMonth(new Date()),
     end: endOfMonth(new Date()),
   });
+
+  const handleChangeDateRange = (range: DateRange) => {
+    setDatePreset('Custom');
+    setCurrentDateRange(range);
+  };
+
+  const handleChangeDatePreset = (preset: string) => {
+    const now = new Date();
+    switch (preset) {
+      case 'Today':
+        setDatePreset('Today');
+        setCurrentDateRange({ start: startOfDay(now), end: endOfDay(now) });
+        break;
+      case 'This Week':
+        setDatePreset('This Week');
+        setCurrentDateRange({ start: startOfWeek(now), end: endOfWeek(now) });
+        break;
+      case 'This Month':
+        setDatePreset('This Month');
+        setCurrentDateRange({ start: startOfMonth(now), end: endOfMonth(now) });
+        break;
+      case 'This Quarter':
+        setDatePreset('This Quarter');
+        setCurrentDateRange({ start: startOfQuarter(now), end: endOfQuarter(now) });
+        break;
+      case 'This Year':
+        setDatePreset('This Year');
+        setCurrentDateRange({ start: startOfYear(now), end: endOfYear(now) });
+        break;
+      default:
+        setDatePreset('Custom');
+    }
+  };
 
   const getSalesByCustomer = useCallback(
     (dateRange: DateRange): SalesByCustomer => {
@@ -107,7 +167,24 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
 
   const renderDateRangeForm = () => (
     <Grid container>
-      <FormGroup style={{ width: '100%' }}>
+      <FormControl variant="outlined" size="small" fullWidth className="mb-3">
+        <InputLabel id="ReportDatePresetLabel">Payment Mode</InputLabel>
+        <Select
+          id="ReportDatePreset"
+          labelId="ReportDatePresetLabel"
+          labelWidth={140}
+          value={datePreset}
+          onChange={(e) => handleChangeDatePreset(e.target.value as string)}
+        >
+          <MenuItem value="Today">Today</MenuItem>
+          <MenuItem value="This Week">This Week</MenuItem>
+          <MenuItem value="This Month">This Month</MenuItem>
+          <MenuItem value="This Quarter">This Quarter</MenuItem>
+          <MenuItem value="This Year">This Year</MenuItem>
+          <MenuItem value="Custom">Custom</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl fullWidth className="mb-3">
         <KeyboardDatePicker
           fullWidth
           id="ReportDateRangeStart"
@@ -117,10 +194,10 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
           format="MM/dd/yyyy"
           margin="dense"
           value={currentDateRange.start}
-          onChange={(date) => setCurrentDateRange({ ...currentDateRange, start: date || new Date() })}
+          onChange={(date) => handleChangeDateRange({ ...currentDateRange, start: date || new Date() })}
         />
-      </FormGroup>
-      <FormGroup style={{ width: '100%' }}>
+      </FormControl>
+      <FormControl fullWidth className="mb-3">
         <KeyboardDatePicker
           fullWidth
           id="ReportDateRangeEnd"
@@ -130,9 +207,9 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
           format="MM/dd/yyyy"
           margin="dense"
           value={currentDateRange.end}
-          onChange={(date) => setCurrentDateRange({ ...currentDateRange, end: date || new Date() })}
+          onChange={(date) => handleChangeDateRange({ ...currentDateRange, end: date || new Date() })}
         />
-      </FormGroup>
+      </FormControl>
     </Grid>
   );
 
@@ -145,6 +222,7 @@ export const Reports: React.FC<ReportsProps> = ({ breadcrumbs, invoices, items, 
           scrollButtons="auto"
           onChange={(_, index) => setTab(index)}
           aria-label="simple tabs example"
+          indicatorColor="primary"
         >
           <Tab label="Sales by Customer" />
           <Tab label="Sales by Items" />

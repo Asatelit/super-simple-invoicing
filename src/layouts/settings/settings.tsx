@@ -185,6 +185,7 @@ export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes,
         <Tabs
           value={tab}
           variant="scrollable"
+          indicatorColor="primary"
           scrollButtons="auto"
           onChange={(_, index) => setTab(index)}
           aria-label="simple tabs example"
