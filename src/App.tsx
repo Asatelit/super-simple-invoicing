@@ -22,16 +22,18 @@ import {
   IconButton,
   InputBase,
   List,
-  Switch,
   ThemeProvider,
   Toolbar,
+  Menu,
+  MenuItem,
   createMuiTheme,
 } from '@material-ui/core';
+import { Brightness7, Brightness4 } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import SearchIcon from '@material-ui/icons/Search';
-import NightsStayIcon from '@material-ui/icons/NightsStay';
 import CloseIcon from '@material-ui/icons/Close';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { appContext } from './hooks';
 import { navItems, SearchResults } from './components';
 import { Routes } from './enums';
@@ -61,6 +63,7 @@ function App() {
   const [open, setOpen] = React.useState(true);
   const [isDarkMode, setIsDarkMode] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
   const [context, actions] = useContext(appContext);
   const history = useHistory();
 
@@ -70,7 +73,11 @@ function App() {
   const theme = React.useMemo(
     () =>
       createMuiTheme({
-        palette: { type: isDarkMode ? 'dark' : 'light', primary: { main: '#0644d7' }, secondary: { main: '#feed5f' } },
+        palette: {
+          type: isDarkMode ? 'dark' : 'light',
+          primary: { main: '#0644d7' },
+          secondary: { main: '#feed5f' },
+        },
         typography: {
           fontFamily: [
             'Montserrat',
@@ -259,8 +266,8 @@ function App() {
     { path: Routes.PaymentsEdit, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
     { path: Routes.PaymentsView, name: 'Payments', c: <L.PaymentsView customers={customersCollection} payments={payments} settings={settings} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
-    { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
-    { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} /> },
+    { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} settings={settings} /> },
+    { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} settings={settings} /> },
     { path: Routes.Reports, name: 'Reports', c: <L.Reports invoices={invoices} customers={customersCollection} items={itemsCollection} expenses={expenses} /> },
     { path: Routes.Settings, name: 'Settings', exact: false, c: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];
@@ -350,8 +357,29 @@ function App() {
                 )}
               </div>
               <div className={styles.grow} />
-              <NightsStayIcon fontSize="small" color="secondary" />
-              <Switch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />
+              <IconButton
+                color="inherit"
+                aria-controls="create-new-menu"
+                aria-haspopup="true"
+                onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+              >
+                <AddCircleIcon />
+              </IconButton>
+              <Menu
+                keepMounted
+                id="create-new-menu"
+                anchorEl={menuAnchorEl}
+                open={Boolean(menuAnchorEl)}
+                onClose={() => setMenuAnchorEl(null)}
+                onClick={() => setMenuAnchorEl(null)}
+              >
+                <MenuItem onClick={() => history.push(Routes.InvoicesCreate)}>New Invoice</MenuItem>
+                <MenuItem onClick={() => history.push(Routes.EstimatesCreate)}>New Estimate</MenuItem>
+                <MenuItem onClick={() => history.push(Routes.CustomersCreate)}>New Customer</MenuItem>
+              </Menu>
+              <IconButton color="inherit" onClick={() => setIsDarkMode(!isDarkMode)}>
+                {isDarkMode ? <Brightness7 fontSize="small" /> : <Brightness4 fontSize="small" />}
+              </IconButton>
             </Toolbar>
           </AppBar>
           <Drawer

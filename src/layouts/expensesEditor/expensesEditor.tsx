@@ -15,7 +15,7 @@ import {
   FormControl,
 } from '@material-ui/core';
 import { Form, FormDataProp, BreadcrumbsCrumbProp } from 'components';
-import { AppActions, Customer, Expense } from 'types';
+import { AppActions, Customer, Expense, Settings } from 'types';
 import { ExpensesActionsAddProps, ExpensesActionsUpdateProps } from 'actions';
 import { Common } from 'layouts';
 import { Routes } from 'enums';
@@ -25,9 +25,16 @@ export type ExpensesEditorProps = {
   customers: Customer[];
   breadcrumbs?: BreadcrumbsCrumbProp[];
   expenses: Expense[];
+  settings: Settings;
 };
 
-export const ExpensesEditor = ({ actions, breadcrumbs, customers, expenses }: ExpensesEditorProps) => {
+export const ExpensesEditor = ({
+  actions,
+  breadcrumbs,
+  customers,
+  expenses,
+  settings,
+}: ExpensesEditorProps) => {
   const { id } = useParams<{ id?: string }>();
   const history = useHistory();
   const [data, setData] = useState<ExpensesActionsAddProps | ExpensesActionsUpdateProps>({
@@ -54,7 +61,7 @@ export const ExpensesEditor = ({ actions, breadcrumbs, customers, expenses }: Ex
     setData({ ...data, ...value });
 
   const renderActions = (
-    <Button type="submit" variant="contained" color="primary" form="EditPaymentForm">
+    <Button type="submit" variant="contained" color="primary" form="EditExpenseForm">
       {id ? 'Update Expense' : 'Save Expense'}
     </Button>
   );
@@ -95,20 +102,11 @@ export const ExpensesEditor = ({ actions, breadcrumbs, customers, expenses }: Ex
                 value={data.expenseCategory ?? null}
                 onChange={(e) => updateData({ expenseCategory: e.target.value as string })}
               >
-                <MenuItem value="Tolls">Tolls</MenuItem>
-                <MenuItem value="Taxi & Parking">Taxi & Parking</MenuItem>
-                <MenuItem value="Insurance">Insurance</MenuItem>
-                <MenuItem value="Lease payments">Lease payments</MenuItem>
-                <MenuItem value="Rent">Rent</MenuItem>
-                <MenuItem value="Advertising">Advertising</MenuItem>
-                <MenuItem value="Education and Training">Education and Training</MenuItem>
-                <MenuItem value="Restaurants/Dining">Restaurants/Dining</MenuItem>
-                <MenuItem value="Office Supplies">Office Supplies</MenuItem>
-                <MenuItem value="Bank Fees">Bank Fees</MenuItem>
-                <MenuItem value="Taxes & Licenses">Taxes & Licenses</MenuItem>
-                <MenuItem value="Accounting">Accounting</MenuItem>
-                <MenuItem value="Phone">Phone</MenuItem>
-                <MenuItem value="Uncategorized">Uncategorized</MenuItem>
+                {settings.expenseCategories.map((element) => (
+                  <MenuItem key={element.name} value={element.name} title={element.description}>
+                    {element.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           ),
@@ -184,7 +182,7 @@ export const ExpensesEditor = ({ actions, breadcrumbs, customers, expenses }: Ex
         breadcrumbs={breadcrumbs}
         actions={renderActions}
       >
-        <Form id="EditPaymentForm" data={formData} onSubmit={handleOnSubmit}/>
+        <Form id="EditExpenseForm" data={formData} onSubmit={handleOnSubmit} />
       </Common>
     </Container>
   );

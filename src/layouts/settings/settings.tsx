@@ -5,6 +5,7 @@ import { Common } from 'layouts';
 import { Settings as AppSettings, AppActions, Tax } from 'types';
 import { Form, FormDataProp, BreadcrumbsCrumbProp } from 'components';
 import { SettingsTaxesTab } from './settingsTaxesTab';
+import { ExpenseCategoriesTab } from './expenseCategoriesTab';
 import styles from './settings.module.css';
 
 export type SettingsProps = {
@@ -192,11 +193,13 @@ export const Settings: React.FC<SettingsProps> = ({ actions, breadcrumbs, taxes,
         >
           <Tab label="Company Information" />
           <Tab label="Tax Types" />
+          <Tab label="Expense Categories " />
         </Tabs>
         {tab === 0 && (
           <Form id="SettingsForm" data={formSettingsData} submit="Save" onSubmit={handleOnSubmit} />
         )}
         {tab === 1 && <SettingsTaxesTab actions={actions} settings={settings} taxes={taxes} />}
+        {tab === 2 && <ExpenseCategoriesTab actions={actions} settings={settings} />}
       </Common>
     </Container>
   );

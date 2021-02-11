@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { generatePath } from 'react-router-dom';
-import { Box, Paper, List, ListItem, ListItemText, Divider, Typography } from '@material-ui/core';
+import { Box, Paper, List, Divider, Typography } from '@material-ui/core';
 import { Customer, Item, Estimate, Invoice, Payment, Expense } from 'types';
 import { Routes } from 'enums';
 import { ListItemNavLink } from '../listItemNavLink/listItemNavLink';

@@ -31,4 +31,5 @@ export type Settings = {
   selectedLanguage: string;
   timeZone: string; // "Europe/Paris"
   timeZones: { key: string; value: string }[]; // key: "(UTC-11:00) Midway", value: "Pacific/Midway"
+  expenseCategories: { name: string; description?: string }[];
 };

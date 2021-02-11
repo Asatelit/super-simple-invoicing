@@ -60,8 +60,22 @@ export const INIT_SETTINGS: Settings = {
   selectedLanguage: 'en',
   timeZone: 'America/New_York',
   timeZones: [{ value: 'America/New_York', key: '(UTC-05:00) New York' }],
-
   taxPerItem: false,
+  expenseCategories: [
+    { name: 'Tolls' },
+    { name: 'Taxi & Parking' },
+    { name: 'Insurance' },
+    { name: 'Lease payments' },
+    { name: 'Rent' },
+    { name: 'Advertising' },
+    { name: 'Education and Training' },
+    { name: 'Restaurants/Dining' },
+    { name: 'Office Supplies' },
+    { name: 'Bank Fees' },
+    { name: 'Taxes & Licenses' },
+    { name: 'Accounting' },
+    { name: 'Phone' },
+  ],
 };
 
 export const INIT_STATE: AppState = {
