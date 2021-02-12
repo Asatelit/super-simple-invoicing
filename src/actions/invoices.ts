@@ -93,9 +93,17 @@ export const createInvoicesActions: Action<InvoicesActions> = (state, updateStat
     const discountAmount = isDiscountInPercentage ? (discountValue / 100) * subTotal : discountValue;
 
     // Taxes calculation
-    const lineTaxes = data.lineTaxes ?? invoice.lineTaxes;
-    const taxAmounts = lineTaxes.map((entity) => (subTotal / 100) * entity.percent);
-    const taxAmount = taxAmounts.reduce((a, b) => a + (b || 0), 0);
+    let taxAmount = 0;
+    const lineTaxes = state.settings.taxPerItem
+      ? []
+      : state.taxes.map((tax) => ({
+          amount: (subTotal / 100) * tax.percent,
+          compoundAmount: (subTotal / 100) * tax.percent,
+          compoundTax: tax.compoundTax,
+          percent: tax.percent,
+          taxId: tax.id,
+        }));
+    taxAmount = lineTaxes.reduce((a, b) => a + (b.amount || 0), 0);
 
     const total = subTotal - discountAmount + taxAmount;
 

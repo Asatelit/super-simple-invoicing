@@ -307,6 +307,14 @@ export const EstimatesEditor = ({
                   {formatMoney(data.subTotal)}
                 </Typography>
               </Grid>
+              {data.taxAmount && (
+                <Grid item md={12}>
+                  <Typography align="right" className="mr-4 mb-3">
+                    <span className="mr-4">Tax:</span>
+                    {formatMoney(data.taxAmount)}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item md={12}>
                 <Box textAlign="right">
                   <FormControl variant="outlined" size="small" className="mb-3" style={{ width: '180px' }}>

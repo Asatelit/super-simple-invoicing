@@ -3,4 +3,4 @@ export const palette = {
   receipts: 'rgb(0, 201, 156)',
   expenses: 'rgb(251, 113, 120)',
   netIncome: 'rgb(88, 81, 216)',
-}
+};

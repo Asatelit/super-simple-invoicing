@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Delete } from '@material-ui/icons';
 import { Box, ListItemIcon, Menu, MenuItem, Paper, Typography } from '@material-ui/core';

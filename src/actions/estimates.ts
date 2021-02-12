@@ -64,6 +64,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
     notes: null,
     referenceNumber: null,
     status: EstimateStatus.DRAFT,
+    sent: false,
     subTotal: 0,
     taxAmount: 0,
     taxPerItem: state.settings.taxPerItem,
@@ -94,9 +95,17 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
     const discountAmount = isDiscountInPercentage ? (discountValue / 100) * subTotal : discountValue;
 
     // Taxes calculation
-    const lineTaxes = data.lineTaxes ?? estimate.lineTaxes;
-    const taxAmounts = lineTaxes.map((entity) => (subTotal / 100) * entity.percent);
-    const taxAmount = taxAmounts.reduce((a, b) => a + (b || 0), 0);
+    let taxAmount = 0;
+    const lineTaxes = state.settings.taxPerItem
+      ? []
+      : state.taxes.map((tax) => ({
+          amount: (subTotal / 100) * tax.percent,
+          compoundAmount: (subTotal / 100) * tax.percent,
+          compoundTax: tax.compoundTax,
+          percent: tax.percent,
+          taxId: tax.id,
+        }));
+    taxAmount = lineTaxes.reduce((a, b) => a + (b.amount || 0), 0);
 
     const total = subTotal - discountAmount + taxAmount;
 
@@ -119,6 +128,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
       notes: data.notes ?? estimate.notes,
       referenceNumber: data.referenceNumber ?? estimate.referenceNumber,
       status: data.status ?? estimate.status,
+      sent: data.sent ?? estimate.sent,
       updatedAt: getTimestamp(),
     };
   };
@@ -245,7 +255,7 @@ export const createEstimatesActions: Action<EstimatesActions> = (state, updateSt
     markSent: (ids) => {
       const markedData = state.estimates.filter((estimate) => ids.includes(estimate.id));
       const estimates = state.estimates.map((item) =>
-        ids.includes(item.id) ? { ...item, status: EstimateStatus.SENT } : item,
+        ids.includes(item.id) ? { ...item, status: EstimateStatus.SENT, sent: true } : item,
       );
       updateState({ estimates });
       return markedData;

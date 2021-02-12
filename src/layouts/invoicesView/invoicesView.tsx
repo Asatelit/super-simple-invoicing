@@ -1,12 +1,13 @@
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
+import { printComponent } from 'react-print-tool';
 import { useParams, generatePath } from 'react-router-dom';
 import { formatMoney } from 'accounting';
 import { format } from 'date-fns';
-import { Grid, Button, Container, List, Typography } from '@material-ui/core';
+import { Grid, Button, Container, List, Typography, Paper } from '@material-ui/core';
 import { Common } from 'layouts';
 import { BreadcrumbsCrumbProp, ListItemNavLink, Invoice } from 'components';
-import { DataCollection, MappedInvoice, Settings, Item } from 'types';
+import { DataCollection, MappedInvoice, Settings, Item, AppActions } from 'types';
 import { Routes, InvoiceStatus } from 'enums';
 import styles from './invoicesView.module.css';
 
@@ -15,21 +16,17 @@ export type InvoicesViewProps = {
   invoices: MappedInvoice[];
   settings: Settings;
   items: DataCollection<Item>;
+  actions: AppActions;
 };
 
-export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoices, settings, items }) => {
+export const InvoicesView: React.FC<InvoicesViewProps> = ({
+  breadcrumbs,
+  actions,
+  invoices,
+  settings,
+  items,
+}) => {
   const { id } = useParams<{ id: string }>();
-
-  const renderActions = (
-    <>
-      <Button variant="outlined" color="primary" className="mr-2">
-        Mark as sent
-      </Button>
-      <Button variant="contained" color="primary">
-        Send Invoice
-      </Button>
-    </>
-  );
 
   const getColor = (value: InvoiceStatus) =>
     clsx({
@@ -41,6 +38,24 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
   const invoice = useMemo(() => invoices.find((element) => element.id === id), [invoices, id]);
 
   if (!invoice) return null;
+
+  const renderActions = (
+    <>
+      {!invoice.sent && (
+        <Button variant="outlined" color="primary" className="mr-2" onClick={() => handle.markAsSent()}>
+          Mark as sent
+        </Button>
+      )}
+      <Button variant="contained" color="primary" onClick={() => handle.print()}>
+        Print
+      </Button>
+    </>
+  );
+
+  const handle = {
+    print: () => printComponent(<Invoice invoice={invoice} items={items} settings={settings} />),
+    markAsSent: () => actions.invoices.markSent([invoice.id]),
+  };
 
   return (
     <Grid container spacing={0} className={styles.root}>
@@ -98,7 +113,20 @@ export const InvoicesView: React.FC<InvoicesViewProps> = ({ breadcrumbs, invoice
       <Grid item sm={12} md={9}>
         <Container>
           <Common title="Invoice" actions={renderActions} />
-          <Invoice invoice={invoice} items={items} settings={settings} />
+          <Paper
+            variant="elevation"
+            style={{
+              height: 'calc(100vh - 200px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'start',
+              justifyContent: 'start',
+              overflow: 'auto',
+              padding: '48px',
+            }}
+          >
+            <Invoice invoice={invoice} items={items} settings={settings} />
+          </Paper>
         </Container>
       </Grid>
     </Grid>

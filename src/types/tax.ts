@@ -12,7 +12,7 @@ export type Tax = {
 
 export type TaxRecord = {
   amount: number;
-  compoundAmount: string;
+  compoundAmount: number;
   compoundTax: boolean;
   percent: number;
   taxId: string;

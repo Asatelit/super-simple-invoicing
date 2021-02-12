@@ -18,6 +18,7 @@ export type Estimate = {
   notes: string | null;
   referenceNumber: string | null;
   status: EstimateStatus;
+  sent: boolean;
   subTotal: number;
   taxAmount: number;
   taxPerItem: boolean;

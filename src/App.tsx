@@ -38,6 +38,7 @@ import { appContext } from './hooks';
 import { navItems, SearchResults } from './components';
 import { Routes } from './enums';
 import { flatten } from './utils';
+import { themeOptions } from './theme';
 import {
   MappedInvoice,
   MappedCustomer,
@@ -53,11 +54,11 @@ import styles from './app.module.css';
 
 const root = document.querySelector(':root') as any;
 
-type MappedData = {
+interface MappedData {
   invoices: MappedInvoice[];
   customers: MappedCustomer[];
   estimates: MappedEstimate[];
-};
+}
 
 function App() {
   const [open, setOpen] = React.useState(true);
@@ -69,33 +70,13 @@ function App() {
 
   const { customers, estimates, items, invoices, settings, payments, expenses, taxes } = context;
 
+  // Generate a theme base on the options received.
   // Users might have specified a preference for a light or dark theme.
   const theme = React.useMemo(
     () =>
       createMuiTheme({
-        palette: {
-          type: isDarkMode ? 'dark' : 'light',
-          primary: { main: '#0644d7' },
-          secondary: { main: '#feed5f' },
-        },
-        typography: {
-          fontFamily: [
-            'Montserrat',
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            'Roboto',
-            '"Helvetica Neue"',
-            'Arial',
-            'sans-serif',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"',
-          ].join(','),
-          h4: { fontSize: 22, fontWeight: 600 },
-          h5: { fontSize: 18, fontWeight: 600 },
-          h6: { fontSize: 16, fontWeight: 500 },
-        },
+        ...themeOptions,
+        palette: { ...themeOptions.palette, type: isDarkMode ? 'dark' : 'light' },
       }),
     [isDarkMode],
   );
@@ -207,23 +188,25 @@ function App() {
     };
   }, [expenses, invoices, payments]);
 
-  const itemsCollection: DataCollection<Item> = useMemo(
-    () =>
-      items.reduce((obj, item) => {
-        obj[item['id']] = item;
-        return obj;
-      }, {}),
-    [items],
-  );
-
-  const customersCollection: DataCollection<Customer> = useMemo(
-    () =>
-      customers.reduce((obj, item) => {
-        obj[item['id']] = item;
-        return obj;
-      }, {}),
-    [customers],
-  );
+  // Convert array of object to single object.
+  const dataCollections = {
+    items: useMemo(
+      (): DataCollection<Item> =>
+        items.reduce((obj, item) => {
+          obj[item['id']] = item;
+          return obj;
+        }, {}),
+      [items],
+    ),
+    customers: useMemo(
+      (): DataCollection<Customer> =>
+        customers.reduce((obj, item) => {
+          obj[item['id']] = item;
+          return obj;
+        }, {}),
+      [customers],
+    ),
+  };
 
   // Transpose Material UI palette to CSS variables.
   useEffect(() => {
@@ -233,15 +216,18 @@ function App() {
     );
   }, [theme.palette]);
 
+  // Handlers
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
+  // Dialogs
   // prettier-ignore
   const dialogRoutes = [
     { path: Routes.SettingsTaxAdd, name: 'Add Tax',  c: <D.TaxEditDialog actions={actions} /> },
     { path: Routes.SettingsTaxEdit, name: 'Edit Tax', c: <D.TaxEditDialog actions={actions} taxes={taxes} /> },
   ];
 
+  // Layouts
   // prettier-ignore
   const layoutRoutes = [
     { path: Routes.Admin, name: 'Admin', c: <></> },
@@ -254,24 +240,25 @@ function App() {
     { path: Routes.ItemsEdit, name: 'Edit Item', c: <L.ItemsEditor actions={actions} items={items} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.ItemsCreate, name: 'New Item', c: <L.ItemsEditor actions={actions} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.EstimatesList, name: 'Estimates', c: <L.EstimatesList actions={actions} estimates={estimates} customers={customers} /> },
-    { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView estimates={mapped.estimates} items={itemsCollection} settings={settings} /> },
+    { path: Routes.EstimatesView, name: 'Estimates', c: <L.EstimatesView actions={actions} estimates={mapped.estimates} items={dataCollections.items} settings={settings} /> },
     { path: Routes.EstimatesEdit, name: 'Edit Estimate', c: <L.EstimatesEditor actions={actions} estimates={mapped.estimates} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.EstimatesCreate, name: 'New Estimate', c: <L.EstimatesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem} /> },
     { path: Routes.InvoicesList, name: 'Invoices', c: <L.InvoicesList actions={actions} invoices={invoices} customers={customers} /> },
     { path: Routes.InvoicesEdit, name: 'Edit Invoice', c: <L.InvoicesEditor actions={actions} invoices={mapped.invoices} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
     { path: Routes.InvoicesCreate, name: 'New Invoice', c: <L.InvoicesEditor actions={actions} items={items} customers={customers} taxes={taxes} taxPerItem={settings.taxPerItem}/> },
-    { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView invoices={mapped.invoices} items={itemsCollection} settings={settings} /> },
+    { path: Routes.InvoicesView, name: 'Invoices', c: <L.InvoicesView actions={actions} invoices={mapped.invoices} items={dataCollections.items} settings={settings} /> },
     { path: Routes.PaymentsList, name: 'Payments', c: <L.PaymentsList actions={actions} payments={payments} customers={customers} /> },
     { path: Routes.PaymentsCreate, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
     { path: Routes.PaymentsEdit, name: 'Payments', c: <L.PaymentsEditor actions={actions} payments={payments} customers={customers} invoices={invoices} settings={settings} /> },
-    { path: Routes.PaymentsView, name: 'Payments', c: <L.PaymentsView customers={customersCollection} payments={payments} settings={settings} /> },
+    { path: Routes.PaymentsView, name: 'Payments', c: <L.PaymentsView customers={dataCollections.customers} payments={payments} settings={settings} /> },
     { path: Routes.ExpensesList, name: 'Expenses', c: <L.ExpensesList actions={actions} expenses={expenses} customers={customers} /> },
     { path: Routes.ExpensesCreate, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} settings={settings} /> },
     { path: Routes.ExpensesEdit, name: 'Expenses', c: <L.ExpensesEditor actions={actions} expenses={expenses} customers={customers} settings={settings} /> },
-    { path: Routes.Reports, name: 'Reports', c: <L.Reports invoices={invoices} customers={customersCollection} items={itemsCollection} expenses={expenses} /> },
+    { path: Routes.Reports, name: 'Reports', c: <L.Reports invoices={invoices} customers={dataCollections.customers} items={dataCollections.items} expenses={expenses} /> },
     { path: Routes.Settings, name: 'Settings', exact: false, c: <L.Settings actions={actions} settings={settings} taxes={taxes} /> },
   ];
 
+  // Rendering the layout according to the current route.
   const renderRoute = (key: number, path: string, c: ReactElement, exact: boolean | undefined) => (
     <Route
       exact={exact ?? true}
@@ -298,6 +285,105 @@ function App() {
     />
   );
 
+  const render = {
+    appbar: (
+      // The top app bar displays information and actions relating to the current screen.
+      <AppBar position="absolute" className={clsx(styles.appBar, open && styles.appBarShift)}>
+        <Toolbar className={styles.toolbar}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            className={clsx(styles.menuButton, open && styles.menuButtonHidden)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div className={styles.search}>
+            <Box display="flex" alignItems="center">
+              <div className={styles.searchIcon}>
+                <SearchIcon />
+              </div>
+              {searchTerm && (
+                <div className={styles.closeIcon} onClick={() => setSearchTerm('')}>
+                  <CloseIcon />
+                </div>
+              )}
+              <InputBase
+                placeholder="Search"
+                classes={{
+                  root: styles.inputRoot,
+                  input: styles.inputInput,
+                }}
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </Box>
+
+            {searchTerm && (
+              <SearchResults
+                searchTerm={searchTerm}
+                customers={customers}
+                estimate={estimates}
+                invoices={invoices}
+                items={items}
+                expenses={expenses}
+                payments={payments}
+              />
+            )}
+          </div>
+          <div className={styles.grow} />
+          <IconButton
+            color="inherit"
+            aria-controls="create-new-menu"
+            aria-haspopup="true"
+            onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+          >
+            <AddCircleIcon />
+          </IconButton>
+          <Menu
+            keepMounted
+            id="create-new-menu"
+            anchorEl={menuAnchorEl}
+            open={Boolean(menuAnchorEl)}
+            onClose={() => setMenuAnchorEl(null)}
+            onClick={() => setMenuAnchorEl(null)}
+          >
+            <MenuItem onClick={() => history.push(Routes.InvoicesCreate)}>New Invoice</MenuItem>
+            <MenuItem onClick={() => history.push(Routes.EstimatesCreate)}>New Estimate</MenuItem>
+            <MenuItem onClick={() => history.push(Routes.CustomersCreate)}>New Customer</MenuItem>
+          </Menu>
+          <IconButton color="inherit" onClick={() => setIsDarkMode(!isDarkMode)}>
+            {isDarkMode ? <Brightness7 fontSize="small" /> : <Brightness4 fontSize="small" />}
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+    ),
+    // Navigation drawer
+    drawer: (
+      <Drawer
+        variant="permanent"
+        open={open}
+        classes={{
+          paper: clsx(styles.drawerPaper, !open && styles.drawerPaperClose),
+        }}
+      >
+        <div className={styles.toolbarIcon}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <Divider />
+        {navItems.map((group, index) => (
+          <Fragment key={`app-nav-group_${index}`}>
+            <List>{group}</List>
+            <Divider />
+          </Fragment>
+        ))}
+      </Drawer>
+    ),
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -312,96 +398,8 @@ function App() {
               </Route>
             ))}
           </SwitchRoute>
-          <AppBar position="absolute" className={clsx(styles.appBar, open && styles.appBarShift)}>
-            <Toolbar className={styles.toolbar}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                className={clsx(styles.menuButton, open && styles.menuButtonHidden)}
-              >
-                <MenuIcon />
-              </IconButton>
-              <div className={styles.search}>
-                <Box display="flex" alignItems="center">
-                  <div className={styles.searchIcon}>
-                    <SearchIcon />
-                  </div>
-                  {searchTerm && (
-                    <div className={styles.closeIcon} onClick={() => setSearchTerm('')}>
-                      <CloseIcon />
-                    </div>
-                  )}
-                  <InputBase
-                    placeholder="Search"
-                    classes={{
-                      root: styles.inputRoot,
-                      input: styles.inputInput,
-                    }}
-                    inputProps={{ 'aria-label': 'search' }}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </Box>
-
-                {searchTerm && (
-                  <SearchResults
-                    searchTerm={searchTerm}
-                    customers={customers}
-                    estimate={estimates}
-                    invoices={invoices}
-                    items={items}
-                    expenses={expenses}
-                    payments={payments}
-                  />
-                )}
-              </div>
-              <div className={styles.grow} />
-              <IconButton
-                color="inherit"
-                aria-controls="create-new-menu"
-                aria-haspopup="true"
-                onClick={(e) => setMenuAnchorEl(e.currentTarget)}
-              >
-                <AddCircleIcon />
-              </IconButton>
-              <Menu
-                keepMounted
-                id="create-new-menu"
-                anchorEl={menuAnchorEl}
-                open={Boolean(menuAnchorEl)}
-                onClose={() => setMenuAnchorEl(null)}
-                onClick={() => setMenuAnchorEl(null)}
-              >
-                <MenuItem onClick={() => history.push(Routes.InvoicesCreate)}>New Invoice</MenuItem>
-                <MenuItem onClick={() => history.push(Routes.EstimatesCreate)}>New Estimate</MenuItem>
-                <MenuItem onClick={() => history.push(Routes.CustomersCreate)}>New Customer</MenuItem>
-              </Menu>
-              <IconButton color="inherit" onClick={() => setIsDarkMode(!isDarkMode)}>
-                {isDarkMode ? <Brightness7 fontSize="small" /> : <Brightness4 fontSize="small" />}
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-          <Drawer
-            variant="permanent"
-            open={open}
-            classes={{
-              paper: clsx(styles.drawerPaper, !open && styles.drawerPaperClose),
-            }}
-          >
-            <div className={styles.toolbarIcon}>
-              <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-            <Divider />
-            {navItems.map((group, index) => (
-              <Fragment key={`app-nav-group_${index}`}>
-                <List>{group}</List>
-                <Divider />
-              </Fragment>
-            ))}
-          </Drawer>
+          {render.appbar}
+          {render.drawer}
           <main className={styles.content}>
             <div className={styles.barSpacer} />
             <SwitchRoute>

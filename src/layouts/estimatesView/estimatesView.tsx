@@ -2,43 +2,31 @@ import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import { formatMoney } from 'accounting';
-import { useParams, generatePath, Link as RouterLink } from 'react-router-dom';
-import { Grid, Button, Container, List, Typography } from '@material-ui/core';
+import { printComponent } from 'react-print-tool';
+import { useParams, generatePath } from 'react-router-dom';
+import { Grid, Button, Container, List, Typography, Paper } from '@material-ui/core';
 import { Common } from 'layouts';
 import { BreadcrumbsCrumbProp, ListItemNavLink, Estimate } from 'components';
-import { MappedEstimate, Item, Settings, DataCollection } from 'types';
+import { MappedEstimate, Item, Settings, DataCollection, AppActions } from 'types';
 import { Routes, EstimateStatus } from 'enums';
 import styles from './estimatesView.module.css';
 
 export type EstimatesViewProps = {
+  actions: AppActions;
   breadcrumbs?: BreadcrumbsCrumbProp[];
   estimates: MappedEstimate[];
   settings: Settings;
   items: DataCollection<Item>;
 };
 
-export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estimates, settings, items }) => {
+export const EstimatesView: React.FC<EstimatesViewProps> = ({
+  breadcrumbs,
+  actions,
+  estimates,
+  settings,
+  items,
+}) => {
   const { id } = useParams<{ id: string }>();
-
-  const renderActions = (
-    <>
-      <Button
-        variant="outlined"
-        color="primary"
-        className="mr-2"
-        component={RouterLink}
-        to={generatePath(Routes.EstimatesEdit, { id })}
-      >
-        Edit
-      </Button>
-      <Button variant="contained" color="primary" className="mr-2">
-        New Transaction
-      </Button>
-      <Button variant="contained" color="secondary">
-        Delete
-      </Button>
-    </>
-  );
 
   const getColor = (value: EstimateStatus) =>
     clsx({
@@ -50,6 +38,24 @@ export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estim
   const estimate = useMemo(() => estimates.find((element) => element.id === id), [estimates, id]);
 
   if (!estimate) return null;
+
+  const renderActions = (
+    <>
+      {!estimate.sent && (
+        <Button variant="outlined" color="primary" className="mr-2" onClick={() => handle.markAsSent()}>
+          Mark as sent
+        </Button>
+      )}
+      <Button variant="contained" color="primary" onClick={() => handle.print()}>
+        Print
+      </Button>
+    </>
+  );
+
+  const handle = {
+    print: () => printComponent(<Estimate estimate={estimate} items={items} settings={settings} />),
+    markAsSent: () => actions.estimates.markSent([estimate.id]),
+  };
 
   return (
     <Grid container spacing={0} className={styles.root}>
@@ -107,7 +113,20 @@ export const EstimatesView: React.FC<EstimatesViewProps> = ({ breadcrumbs, estim
       <Grid item sm={12} md={9}>
         <Container>
           <Common title="Estimate" actions={renderActions} />
-          <Estimate estimate={estimate} items={items} settings={settings} />
+          <Paper
+            variant="elevation"
+            style={{
+              height: 'calc(100vh - 200px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'start',
+              justifyContent: 'start',
+              overflow: 'auto',
+              padding: '48px',
+            }}
+          >
+            <Estimate estimate={estimate} items={items} settings={settings} />
+          </Paper>
         </Container>
       </Grid>
     </Grid>

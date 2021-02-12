@@ -124,6 +124,14 @@ export function generateDemoData(): AppState {
     }),
   );
 
+  // Generate Taxes
+  const taxes = () => A.createTaxesActions(state(), updateState);
+  taxes().add({
+    name: 'State income tax',
+    collectiveTax: true,
+    percent: 2,
+  });
+
   // Generate Items
   const items = () => A.createItemsActions(state(), updateState);
   fake.products.forEach((name) =>
@@ -220,14 +228,6 @@ export function generateDemoData(): AppState {
       customerId: customer.id,
     }),
   );
-
-  // Generate Taxes
-  const taxes = () => A.createTaxesActions(state(), updateState);
-  taxes().add({
-    name: 'State income tax',
-    collectiveTax: true,
-    percent: 2,
-  });
 
   return state();
 }
